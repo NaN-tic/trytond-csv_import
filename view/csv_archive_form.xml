@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!-- This file is part of csv_import module for Tryton.
+The COPYRIGHT file at the top level of this repository contains the full
+copyright notices and license terms. -->
+<form string="CSV Archive" col="4">
+    <label name="profile"/>
+    <field name="profile"/>
+    <label name="date_archive"/>
+    <field name="date_archive"/>
+    <label name="data"/>
+    <field name="data"/>
+    <label name="archive_name"/>
+    <field name="archive_name"/>
+            <button name="cancel"
+                string="Cancel Import Data from CSV"
+                icon="tryton-cancel"/>
+            <button name="draft" string="Draft"/>
+            <button name="import_csv"
+                string="Import Data from CSV"
+                icon="tryton-go-next"/>
+    <newline/>
+    <label name="state"/>
+    <field name="state"/>
+</form>

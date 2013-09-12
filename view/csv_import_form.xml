@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- This file is part of csv_import module for Tryton.
+The COPYRIGHT file at the top level of this repository contains the full
+copyright notices and license terms. -->
+<form string="CSV Import" col="4">
+    <label name="create_date"/>
+    <field name="create_date"/>
+    <label name="record"/>
+    <field name="record"/>
+    <label name="status"/>
+    <field name="status"/>
+    <label name="archive"/>
+    <field name="archive"/>
+    <label name="comment"/>
+    <field name="comment" colspan="4"/>
+</form>

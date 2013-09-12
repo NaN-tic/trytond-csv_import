@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- This file is part of csv_import module for Tryton.
+The COPYRIGHT file at the top level of this repository contains the full
+copyright notices and license terms. -->
+<tree string="CSV Profiles">
+    <field name="party"/>
+    <field name="code_external"/>
+    <field name="code_internal"/>
+    <field name="create_record"/>
+    <field name="update_record"/>
+    <field name="language"/>
+    <field name="group"/>
+    <field name="csv_header"/>
+    <field name="csv_archive_separator"/>
+    <field name="csv_quote"/>
+</tree>

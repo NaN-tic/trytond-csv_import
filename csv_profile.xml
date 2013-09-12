@@ -1,0 +1,204 @@
+<?xml version="1.0"?>
+<!-- This file is part of csv_import module for Tryton.
+The COPYRIGHT file at the top level of this repository contains the full
+copyright notices and license terms. -->
+<tryton>
+    <data>
+        <!-- groups -->
+        <record model="res.group" id="group_csv_import_admin">
+            <field name="name">CSV Import Administrator</field>
+        </record>
+        <record model="res.user-res.group" id="user_admin_group_csv_import_admin">
+            <field name="user" ref="res.user_admin"/>
+            <field name="group" ref="group_csv_import_admin"/>
+        </record>
+
+        <!-- csv.profile -->
+        <record model="ir.ui.view" id="csv_profile_tree_view">
+            <field name="model">csv.profile</field>
+            <field name="type">tree</field>
+            <field name="priority" eval="30"/>
+            <field name="name">csv_profile_tree</field>
+        </record>
+        <record model="ir.ui.view" id="csv_profile_form_view">
+            <field name="model">csv.profile</field>
+            <field name="type">form</field>
+            <field name="priority" eval="30"/>
+            <field name="name">csv_profile_form</field>
+        </record>
+        <record model="ir.action.act_window" id="act_csv_profile">
+            <field name="name">CSV Profile</field>
+            <field name="res_model">csv.profile</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_csv_profile_tree">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="csv_profile_tree_view"/>
+            <field name="act_window" ref="act_csv_profile"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_csv_profile_form">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="csv_profile_form_view"/>
+            <field name="act_window" ref="act_csv_profile"/>
+        </record>
+        <menuitem
+            parent="base_external_mapping.base_external_mapping_menu"
+            action="act_csv_profile"
+            id="menu_csv_profile"/>
+        <record model="ir.model.access" id="access_csv_profile_configuration">
+            <field name="model" search="[('model', '=', 'csv.profile')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_csv_profile_configuration_admin">
+            <field name="model" search="[('model', '=', 'csv.profile')]"/>
+            <field name="group" ref="group_csv_import_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+        <record model="ir.action.act_window" id="act_csv_archive_shortcut">
+            <field name="name">CSV Archives</field>
+            <field name="res_model">csv.archive</field>
+            <field name="domain">[("profile", "=", Eval('active_id'))]</field>
+        </record>
+        <record model="ir.action.keyword"
+                id="act_open_csv_archive_keyword">
+            <field name="keyword">form_relate</field>
+            <field name="model">csv.profile,-1</field>
+            <field name="action" ref="act_csv_archive_shortcut"/>
+        </record>
+        <record model="ir.action-res.group"
+            id="act_csv_archive_shortcut-group_csv_import_admin">
+            <field name="action" ref="act_csv_archive_shortcut"/>
+            <field name="group" ref="group_csv_import_admin"/>
+        </record>
+
+        <!-- base.external.mapping -->
+        <record model="ir.ui.view" id="base_external_mapping_tree_view">
+            <field name="model">base.external.mapping</field>
+            <field name="inherit"
+                ref="base_external_mapping.base_external_mapping_tree_view"/>
+            <field name="name">base_external_mapping_tree</field>
+        </record>
+        <record model="ir.ui.view" id="base_external_mapping_form_view}">
+            <field name="model">base.external.mapping</field>
+            <field name="inherit"
+                ref="base_external_mapping.base_external_mapping_form_view"/>
+            <field name="name">base_external_mapping_form</field>
+        </record>
+
+        <!-- csv.archive -->
+        <record model="ir.ui.view" id="csv_archive_tree_view">
+            <field name="model">csv.archive</field>
+            <field name="type">tree</field>
+            <field name="priority" eval="30"/>
+            <field name="name">csv_archive_tree</field>
+        </record>
+        <record model="ir.ui.view" id="csv_archive_form_view">
+            <field name="model">csv.archive</field>
+            <field name="type">form</field>
+            <field name="priority" eval="30"/>
+            <field name="name">csv_archive_form</field>
+        </record>
+        <record model="ir.action.act_window" id="act_csv_archive">
+            <field name="name">CSV Archive</field>
+            <field name="res_model">csv.archive</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_csv_archive_tree">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="csv_archive_tree_view"/>
+            <field name="act_window" ref="act_csv_archive"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_csv_archive_form">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="csv_archive_form_view"/>
+            <field name="act_window" ref="act_csv_archive"/>
+        </record>
+        <menuitem
+            parent="base_external_mapping.base_external_mapping_menu"
+            action="act_csv_archive"
+            id="menu_csv_archive"/>
+        <record model="ir.model.access" id="access_csv_archive_configuration">
+            <field name="model" search="[('model', '=', 'csv.archive')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_csv_archive_configuration_admin">
+            <field name="model" search="[('model', '=', 'csv.archive')]"/>
+            <field name="group" ref="group_csv_import_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <!-- csv.import -->
+        <record model="ir.ui.view" id="csv_import_tree_view">
+            <field name="model">csv.import</field>
+            <field name="type">tree</field>
+            <field name="priority" eval="30"/>
+            <field name="name">csv_import_tree</field>
+        </record>
+        <record model="ir.ui.view" id="csv_import_form_view">
+            <field name="model">csv.import</field>
+            <field name="type">form</field>
+            <field name="priority" eval="30"/>
+            <field name="name">csv_import_form</field>
+        </record>
+        <record model="ir.action.act_window" id="act_csv_import">
+            <field name="name">CSV Import</field>
+            <field name="res_model">csv.import</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_csv_import_tree">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="csv_import_tree_view"/>
+            <field name="act_window" ref="act_csv_import"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_csv_import_form">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="csv_import_form_view"/>
+            <field name="act_window" ref="act_csv_import"/>
+        </record>
+        <record model="ir.action.act_window" id="act_csv_import_with_domain">
+            <field name="name">CSV Import</field>
+            <field name="res_model">csv.import</field>
+            <field name="domain">[("archive", "=", Eval('active_id'))]</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_csv_import_with_domain_tree">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="csv_import_tree_view"/>
+            <field name="act_window" ref="act_csv_import_with_domain"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_csv_import_with_domain_form">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="csv_import_form_view"/>
+            <field name="act_window" ref="act_csv_import_with_domain"/>
+        </record>
+        <menuitem
+            id="menu_csv_import"
+            parent="base_external_mapping.base_external_mapping_menu"
+            action="act_csv_import"
+            />
+        <record model="ir.model.access" id="access_csv_import_configuration">
+            <field name="model" search="[('model', '=', 'csv.import')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_csv_import_configuration_admin">
+            <field name="model" search="[('model', '=', 'csv.import')]"/>
+            <field name="group" ref="group_csv_import_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+    </data>
+</tryton>
+    
