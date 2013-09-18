@@ -64,6 +64,10 @@ msgid ""
 msgstr "La función en el perfil CSV tiene un error."
 
 msgctxt "error:csv.archive:"
+msgid "Import CSV file."
+msgstr "Importar fichero CSV."
+
+msgctxt "error:csv.archive:"
 msgid "Import CSV notification from %s."
 msgstr "Notificación de importación CSV desde %s."
 
@@ -104,6 +108,12 @@ msgstr "Simulación finalizada con éxito."
 msgctxt "error:csv.archive:"
 msgid "There are new %s from %s. IDs: "
 msgstr "Hay nuevos %s desde %s. IDs: "
+
+msgctxt "error:csv.archive:"
+msgid "There is no default email configured. Please, configure one."
+msgstr ""
+"No hay ningún correo electrónico por defecto. Deberá configurar un correo "
+"electrónico."
 
 msgctxt "error:csv.archive:"
 msgid ""
