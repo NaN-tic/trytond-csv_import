@@ -4,10 +4,14 @@
 from StringIO import StringIO
 from csv import reader
 from datetime import datetime
+from email.mime.text import MIMEText
+from trytond.config import CONFIG
 from trytond.model import ModelSQL, ModelView, fields, Workflow
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval, If
+from trytond.tools import get_smtp_server
 from trytond.transaction import Transaction
+import logging
 import os
 import psycopg2
 
@@ -145,6 +149,9 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                     'record.',
                 'notification': 'Import CSV notification from %s.',
                 'new_record': 'There are new %s from %s. IDs: ',
+                'not_default_email_configured': 'There is no default email '
+                    'configured. Please, configure one.',
+                'request_title': 'Import CSV file.',
                 })
         path = os.path.abspath(os.path.dirname(__file__))
         if not os.path.exists('%s/csv' % path):
@@ -343,7 +350,6 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
         ExternalMapping = pool.get('base.external.mapping')
         CSVImport = pool.get('csv.import')
         User = pool.get('res.user')
-        Request = pool.get('res.request')
         log_vlist = []
         context = {}
         for archive in archives:
@@ -358,7 +364,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
             external_mappings = profile.models
             field_key = profile.code_external
             ModelToImport = pool.get(model)
-            
+
             data = StringIO(archive.data)
             try:
                 rows = reader(data, delimiter=str(separator),
@@ -385,7 +391,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
             if header:
                 rows.next()
             parent_models = ExternalMapping.search([('parent', '=', False)])
-            request = []
+            send_mail = []
             csv_vals = {}
             new_records = []
             updated_records = []
@@ -431,7 +437,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                                 'status': 'error',
                                 'comment': cls.raise_user_error(
                                     'function_error',
-                                    error_args=(', '.join([ x for x in
+                                    error_args=(', '.join([x for x in
                                                 csv_vals[external_mapping.id]]
                                             ),),
                                     raise_exception=False),
@@ -468,7 +474,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                                         log_vlist=log_vlist,
                                         key_field=context['key_field'],
                                         key_value=context['key_value'])
-                                request.append(record)
+                                send_mail.append(record)
 
                     # New records
                     elif profile.create_record:
@@ -481,7 +487,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                                         key_field=context['key_field'],
                                         key_value=context['key_value'])
                                 new_records.append(new_record)
-                                request.append(new_record)
+                                send_mail.append(new_record)
                     else:
                         log_vlist.append({
                             'create_date': now,
@@ -504,24 +510,43 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                     CSVImport.create(log_vlist)
                     return
 
-            if request: #create requests for each user in the profile group
+            if send_mail:  # create mails for each user in the profile group
                 users = User.search([('groups', '=', profile.group.id)])
-                sender, = User.search([('login', '=', 'admin')])
                 body = (cls.raise_user_error('new_record',
-                        error_args=(request[0].__name__,
+                        error_args=(send_mail[0].__name__,
                             profile.party.name),
                         raise_exception=False) +
-                    ''.join([str(x.id) + '\n' for x in set(request)]))
-                for user in users:
-                    Request.create([{
-                            'name': cls.raise_user_error('notification',
-                                error_args=(profile.party.name,),
+                    ''.join([str(x.id) + '\n' for x in set(send_mail)]))
+                subject = cls.raise_user_error('request_title',
+                    raise_exception=False)
+                from_addr = CONFIG.get('smtp_default_from_email', False)
+                if not from_addr:
+                    log_vlist.append({
+                            'create_date': now,
+                            'status': 'error',
+                            'comment': cls.raise_user_error(
+                                'not_default_email_configured',
                                 raise_exception=False),
-                            'state': 'waiting',
-                            'act_from': sender,
-                            'act_to': user,
-                            'body': body,
-                            }])
+                            'archive': archive
+                            })
+                    continue
+                msg = MIMEText(body)
+                msg['From'] = from_addr
+                msg['Subject'] = subject
+                logger = logging.getLogger(__name__)
+                for user in users:
+                    to_addr = user.email
+                    if to_addr:
+                        msg['To'] = to_addr
+                        try:
+                            server = get_smtp_server()
+                            server.sendmail(from_addr, to_addr,
+                                msg.as_string())
+                            server.quit()
+                        except Exception, exception:
+                            logger.error('Unable to deliver email (%s):\n %s'
+                                % (exception, msg.as_string()))
+
         cls.post_import(code_internal.model, list(set(new_records)))
         for log in log_vlist:
             log['archive'] = archive
