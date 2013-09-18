@@ -69,6 +69,10 @@ msgstr ""
 "Mireu el registre per a més informació."
 
 msgctxt "error:csv.archive:"
+msgid "Import CSV file."
+msgstr "Importa fitxer CSV."
+
+msgctxt "error:csv.archive:"
 msgid "Import CSV notification from %s."
 msgstr "Notificació de importació CSV des de %s."
 
@@ -107,6 +111,12 @@ msgstr "Simulació finalitzada amb èxit."
 msgctxt "error:csv.archive:"
 msgid "There are new %s from %s. IDs: "
 msgstr "Hi han nous %s des de %s: IDs: "
+
+msgctxt "error:csv.archive:"
+msgid "There is no default email configured. Please, configure one."
+msgstr ""
+"No hi ha cap correu electrònic disponible. Hareu de configurar un correu "
+"electrònic."
 
 msgctxt "error:csv.archive:"
 msgid ""
