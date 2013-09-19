@@ -168,7 +168,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                 error_description='reading_error',
                 error_description_args=(self.archive_name,),
                 raise_exception=True)
-    
+
     @classmethod
     def set_data(cls, archives, name, value):
         path = os.path.abspath(os.path.dirname(__file__))
@@ -211,7 +211,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
 
     @classmethod
     def _search_children(cls, csv_model, parent_record, values):
-        """ This method is made to override itself and compute the children 
+        """ This method is made to override itself and compute the children
             of the csv_model.model.model
         """
         return []
@@ -530,7 +530,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                             'archive': archive
                             })
                     continue
-                msg = MIMEText(body)
+                msg = MIMEText(body.encode('utf-8'))
                 msg['From'] = from_addr
                 msg['Subject'] = subject
                 logger = logging.getLogger(__name__)
