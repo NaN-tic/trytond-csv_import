@@ -124,7 +124,6 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                 'save_error': 'Error saving file! %s.',
                 'format_error': 'CSV improperly formatted.',
                 'reading_error': 'Error reading file %s.',
-                'archive_not_found': 'Archive %s/csv/%s not found.',
                 'read_error': 'Error reading file: %s.\nError %s.',
                 'reading_archive': 'Reading %s archive.',
                 'mapping_error': 'Error in mapping template: %s.',
@@ -153,13 +152,12 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                     'configured. Please, configure one.',
                 'request_title': 'Import CSV file.',
                 })
-        path = os.path.abspath(os.path.dirname(__file__))
-        if not os.path.exists('%s/csv' % path):
-            os.makedirs('%s/csv' % path)
 
     def get_data(self, name):
-        path = os.path.abspath(os.path.dirname(__file__))
-        archive = '%s/csv/%s' % (path, self.archive_name)
+        cursor = Transaction().cursor
+        path = os.path.join(CONFIG.get('data_path', '/var/lib/trytond'),
+            cursor.database_name, 'csv_import')
+        archive = '%s/%s' % (path, self.archive_name)
         try:
             with open(archive, 'r') as f:
                 return buffer(f.read())
