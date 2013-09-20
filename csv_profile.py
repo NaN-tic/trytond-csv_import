@@ -171,9 +171,13 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
 
     @classmethod
     def set_data(cls, archives, name, value):
-        path = os.path.abspath(os.path.dirname(__file__))
+        cursor = Transaction().cursor
+        path = os.path.join(CONFIG.get('data_path', '/var/lib/trytond'),
+            cursor.database_name, 'csv_import')
+        if not os.path.exists(path):
+            os.makedirs(path, mode=0777)
         for archive in archives:
-            archive = '%s/csv/%s' % (path, archive.archive_name)
+            archive = '%s/%s' % (path, archive.archive_name)
             try:
                 with open(archive, 'w') as f:
                     f.write(value)
