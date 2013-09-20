@@ -157,14 +157,14 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
         cursor = Transaction().cursor
         path = os.path.join(CONFIG.get('data_path', '/var/lib/trytond'),
             cursor.database_name, 'csv_import')
-        archive = '%s/%s' % (path, self.archive_name)
+        archive = '%s/%s' % (path, self.archive_name.replace(' ', '_'))
         try:
             with open(archive, 'r') as f:
                 return buffer(f.read())
         except IOError:
             self.raise_user_error('error',
                 error_description='reading_error',
-                error_description_args=(self.archive_name,),
+                error_description_args=(self.archive_name.replace(' ', '_'),),
                 raise_exception=True)
 
     @classmethod
@@ -175,7 +175,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
         if not os.path.exists(path):
             os.makedirs(path, mode=0777)
         for archive in archives:
-            archive = '%s/%s' % (path, archive.archive_name)
+            archive = '%s/%s' % (path, archive.archive_name.replace(' ', '_'))
             try:
                 with open(archive, 'w') as f:
                     f.write(value)
@@ -189,11 +189,11 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
         today = Pool().get('ir.date').today()
         files = len(self.search([
                     ('archive_name', 'like', '%s_%s_%s.csv' %
-                        (today, '%', self.profile.rec_name)),
+                        (today, '%', self.profile.rec_name.replace(' ', '_'))),
                 ]))
         return {
             'archive_name': ('%s_%s_%s.csv' %
-                (today, files, self.profile.rec_name)),
+                (today, files, self.profile.rec_name.replace(' ', '_'))),
             }
 
     @staticmethod
