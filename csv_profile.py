@@ -521,7 +521,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                     ''.join([str(x.id) + '\n' for x in set(send_mail)]))
                 subject = cls.raise_user_error('request_title',
                     raise_exception=False)
-                from_addr = CONFIG.get('smtp_default_from_email', False)
+                from_addr = CONFIG.get('smtp_user', False)
                 if not from_addr:
                     log_vlist.append({
                             'create_date': now,
