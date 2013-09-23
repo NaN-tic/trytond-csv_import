@@ -6,6 +6,7 @@ from csv import reader
 from datetime import datetime
 from email.mime.text import MIMEText
 from trytond.config import CONFIG
+from trytond.exceptions import UserError
 from trytond.model import ModelSQL, ModelView, fields, Workflow
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval, If
@@ -237,6 +238,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
             return None
         if not kvargs:
             kvargs = {}
+        logger = logging.getLogger(__name__)
         ExternalMapping = pool.get('base.external.mapping')
         model = csv_model.model.model
         ModelToImport = pool.get(model)
@@ -266,8 +268,18 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                 status = 'done'
             except psycopg2.ProgrammingError, e:
                 Transaction().cursor.rollback()
+                logger.error('Unable to create %s record: %s'
+                    % (ModelToImport.__name__, e))
                 cls.raise_user_error('creation_error',
                     error_args=(values[model], e))
+            except UserError, e:
+                logger.error('Unable to create %s record: %s'
+                    % (ModelToImport.__name__, e[1][0]))
+                cls.raise_user_error('creation_error',
+                    error_args=(values[model], e))
+            except Exception, e:
+                logger.error('Unable to create %s record: %s'
+                    % (ModelToImport.__name__, e))
         else:
             record, = records
             comment = cls.raise_user_error('record_already_exist',
@@ -280,17 +292,16 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                 'record': str(record),
                 'status': status,
                 'comment': comment,
-#                'archive': archive,
                 })
         children = ExternalMapping.search([
-              ('profile', '=', profile.id),
-              ('parent', '=', csv_model.id),
-              ])
+                ('profile', '=', profile.id),
+                ('parent', '=', csv_model.id),
+                ])
         for child in ExternalMapping.browse(children):
             cls._save_record(child, values, record=record,
-                   key_field=kvargs['key_field'],
-                   key_value=kvargs['key_value'],
-                   log_vlist=kvargs['log_vlist'])
+                key_field=kvargs['key_field'],
+                key_value=kvargs['key_value'],
+                log_vlist=kvargs['log_vlist'])
         return record
 
     @classmethod
@@ -488,8 +499,9 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                                         log_vlist=log_vlist,
                                         key_field=context['key_field'],
                                         key_value=context['key_value'])
-                                new_records.append(new_record)
-                                send_mail.append(new_record)
+                                if new_record:
+                                    new_records.append(new_record)
+                                    send_mail.append(new_record)
                     else:
                         log_vlist.append({
                             'create_date': now,
@@ -545,9 +557,9 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                             server.sendmail(from_addr, to_addr,
                                 msg.as_string())
                             server.quit()
-                        except Exception, exception:
+                        except Exception, e:
                             logger.error('Unable to deliver email (%s):\n %s'
-                                % (exception, msg.as_string()))
+                                % (e, msg.as_string()))
 
         cls.post_import(code_internal.model, list(set(new_records)))
         for log in log_vlist:
