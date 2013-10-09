@@ -403,7 +403,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                 })
             if header:
                 rows.next()
-            parent_models = ExternalMapping.search([('parent', '=', False)])
+            parent_models = ExternalMapping.search([('parent', '=', None)])
             send_mail = []
             csv_vals = {}
             new_records = []
