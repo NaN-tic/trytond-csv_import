@@ -23,7 +23,7 @@ __metaclass__ = PoolMeta
 class CSVProfile(ModelSQL, ModelView):
     ' CSV Profile'
     __name__ = 'csv.profile'
-    _rec_name = 'party'
+    name = fields.Char('Name', required=True)
     party = fields.Many2One('party.party', 'Party', required=True,
         help='Party CSV Profile.')
     archives = fields.One2Many('csv.archive', 'profile',

@@ -3,6 +3,7 @@
 The COPYRIGHT file at the top level of this repository contains the full
 copyright notices and license terms. -->
 <tree string="CSV Profiles">
+    <field name="name"/>
     <field name="party"/>
     <field name="code_external"/>
     <field name="code_internal"/>
