@@ -219,18 +219,22 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
             @param kvargs: A standard dictionary for contextual values
             @return: Return record created
         """
-        pool = Pool()
-        now = datetime.now()
+
         if not values:
             return None
         if not kvargs:
             kvargs = {}
-        logger = logging.getLogger(__name__)
+
+        pool = Pool()
         ExternalMapping = pool.get('base.external.mapping')
         model = csv_model.model.model
         ModelToImport = pool.get(model)
+
+        now = datetime.now()
         profile = csv_model.profile
         parent = csv_model.parent
+        comment = None
+        logger = logging.getLogger(__name__)
 
         if kvargs.get('record'):
             values[model][csv_model.rel_field.name] = kvargs['record']
