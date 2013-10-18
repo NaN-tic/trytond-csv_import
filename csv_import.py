@@ -69,7 +69,6 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
     ' CSV Archive'
     __name__ = 'csv.archive'
     _rec_name = 'archive_name'
-    _order = 'date_archive DESC'
     profile = fields.Many2One('csv.profile', 'CSV Profile', ondelete='CASCADE',
         required=True, on_change=['profile'])
     date_archive = fields.DateTime('Date', required=True)
@@ -85,6 +84,8 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(CSVArchive, cls).__setup__()
+        cls._order.insert(0, ('date_archive', 'DESC'))
+        cls._order.insert(1, ('id', 'DESC'))
         cls._transitions |= set((
                 ('draft', 'done'),
                 ('draft', 'canceled'),
@@ -593,7 +594,6 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
 class CSVImport(ModelSQL, ModelView):
     ' CSV Import'
     __name__ = 'csv.import'
-    _order = 'id DESC'
     _rec_name = 'create_date'
     create_date = fields.DateTime('Create Date')
     record = fields.Reference('Imported Record', selection='get_origin')
@@ -603,6 +603,12 @@ class CSVImport(ModelSQL, ModelView):
             ], 'Status')
     comment = fields.Text('Comment')
     archive = fields.Many2One('csv.archive', 'Archive')
+
+    @classmethod
+    def __setup__(cls):
+        super(CSVImport, cls).__setup__()
+        cls._order.insert(0, ('create_date', 'DESC'))
+        cls._order.insert(1, ('id', 'DESC'))
 
     @classmethod
     def get_origin(cls):
