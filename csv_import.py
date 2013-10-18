@@ -267,7 +267,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                 logger.error('Unable to create %s record: %s'
                     % (ModelToImport.__name__, e[1][0]))
                 cls.raise_user_error('creation_error',
-                    error_args=(values[model], e))
+                    error_args=(values.get(model), e))
             except Exception, e:
                 logger.error('Unable to create %s record: %s'
                     % (ModelToImport.__name__, e))
