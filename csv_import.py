@@ -54,10 +54,6 @@ class CSVProfile(ModelSQL, ModelView):
         help='Character to use as quote')
     note = fields.Text('Notes')
 
-    def get_rec_name(self, name):
-        if self.party:
-            return self.party.get_rec_name(name)
-
     @staticmethod
     def default_active():
         return True
