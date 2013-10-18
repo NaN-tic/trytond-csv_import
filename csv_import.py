@@ -350,12 +350,14 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
     @Workflow.transition('done')
     def import_csv(cls, archives):
         pool = Pool()
-        now = datetime.now()
         ExternalMapping = pool.get('base.external.mapping')
         CSVImport = pool.get('csv.import')
         User = pool.get('res.user')
+
+        now = datetime.now()
         log_vlist = []
         context = {}
+
         for archive in archives:
             profile = archive.profile
             separator = profile.csv_archive_separator
@@ -367,6 +369,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
             model = code_internal.model.model
             external_mappings = profile.models
             field_key = profile.code_external
+
             ModelToImport = pool.get(model)
 
             data = StringIO(archive.data)
@@ -385,6 +388,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                     })
                 CSVImport.create(log_vlist)
                 return
+
             log_vlist.append({
                 'create_date': now,
                 'status': 'done',
@@ -395,6 +399,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
             if header:
                 rows.next()
             parent_models = ExternalMapping.search([('parent', '=', None)])
+
             send_mail = []
             csv_vals = {}
             new_records = []
@@ -432,6 +437,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                                 })
                             CSVImport.create(log_vlist)
                             return
+
                 if code_external:
                     try_vals = {}
                     for external_mapping in external_mappings:
