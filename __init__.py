@@ -8,7 +8,7 @@ from .csv_import import *
 def register():
     Pool.register(
         CSVProfile,
-        BaseExternalMapping,
         CSVArchive,
         CSVImport,
+        BaseExternalMapping,
         module='csv_import', type_='model')

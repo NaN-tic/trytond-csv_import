@@ -16,7 +16,7 @@ import logging
 import os
 import psycopg2
 
-__all__ = ['CSVProfile', 'BaseExternalMapping', 'CSVArchive', 'CSVImport']
+__all__ = ['CSVProfile', 'CSVArchive', 'CSVImport', 'BaseExternalMapping']
 __metaclass__ = PoolMeta
 
 
@@ -69,15 +69,6 @@ class CSVProfile(ModelSQL, ModelView):
     @staticmethod
     def default_update_record():
         return False
-
-
-class BaseExternalMapping:
-    __name__ = 'base.external.mapping'
-    profile = fields.Many2One('csv.profile', 'CSV Profile')
-    parent = fields.Many2One('base.external.mapping', 'Parent Model')
-    rel_field = fields.Many2One('ir.model.field', 'Related Field')
-    required = fields.Boolean('Required', help='Avoid blank rows in csv file. '
-        'If not, the previous row is given.')
 
 
 class CSVArchive(Workflow, ModelSQL, ModelView):
@@ -613,3 +604,12 @@ class CSVImport(ModelSQL, ModelView):
         Model = Pool().get('ir.model')
         models = Model.search([])
         return [('', '')] + [(m.model, m.name) for m in models]
+
+
+class BaseExternalMapping:
+    __name__ = 'base.external.mapping'
+    profile = fields.Many2One('csv.profile', 'CSV Profile')
+    parent = fields.Many2One('base.external.mapping', 'Parent Model')
+    rel_field = fields.Many2One('ir.model.field', 'Related Field')
+    required = fields.Boolean('Required', help='Avoid blank rows in csv file. '
+        'If not, the previous row is given.')
