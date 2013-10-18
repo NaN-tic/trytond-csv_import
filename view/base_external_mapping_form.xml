@@ -3,15 +3,19 @@
 The COPYRIGHT file at the top level of this repository contains the full
 copyright notices and license terms. -->
 <data>
-    <xpath expr="/form/field[@name=&quot;model&quot;]"
+    <xpath expr="/form/field[@name=&quot;mapping_lines&quot;]"
             position="after">
-        <label name="profile"/>
-        <field name="profile"/>
-        <label name="parent"/>
-        <field name="parent"/>
-        <label name="rel_field"/>
-        <field name="rel_field"/>
-        <label name="required"/>
-        <field name="required"/>
+        <group col="6" colspan="6" id="csv_import">
+            <separator name="csv_import" string="CSV Import" colspan="6"/>
+            <label name="profile"/>
+            <field name="profile"/>
+            <label name="required"/>
+            <field name="required"/>
+            <newline/>
+            <label name="parent"/>
+            <field name="parent"/>
+            <label name="rel_field"/>
+            <field name="rel_field"/>
+        </group>
     </xpath>
 </data>
