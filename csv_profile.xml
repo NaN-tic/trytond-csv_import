@@ -4,6 +4,8 @@ The COPYRIGHT file at the top level of this repository contains the full
 copyright notices and license terms. -->
 <tryton>
     <data>
+        <menuitem parent="ir.menu_administration" name="CSV Import" id="menu_main_csv_import"/>
+
         <!-- groups -->
         <record model="res.group" id="group_csv_import_admin">
             <field name="name">CSV Import Administrator</field>
@@ -40,10 +42,8 @@ copyright notices and license terms. -->
             <field name="view" ref="csv_profile_form_view"/>
             <field name="act_window" ref="act_csv_profile"/>
         </record>
-        <menuitem
-            parent="base_external_mapping.base_external_mapping_menu"
-            action="act_csv_profile"
-            id="menu_csv_profile"/>
+        <menuitem parent="menu_main_csv_import" action="act_csv_profile" id="menu_csv_profile" sequence="10"/>
+
         <record model="ir.model.access" id="access_csv_profile_configuration">
             <field name="model" search="[('model', '=', 'csv.profile')]"/>
             <field name="perm_read" eval="True"/>
@@ -117,10 +117,8 @@ copyright notices and license terms. -->
             <field name="view" ref="csv_archive_form_view"/>
             <field name="act_window" ref="act_csv_archive"/>
         </record>
-        <menuitem
-            parent="base_external_mapping.base_external_mapping_menu"
-            action="act_csv_archive"
-            id="menu_csv_archive"/>
+        <menuitem parent="menu_main_csv_import" action="act_csv_archive" id="menu_csv_archive" sequence="20"/>
+
         <record model="ir.model.access" id="access_csv_archive_configuration">
             <field name="model" search="[('model', '=', 'csv.archive')]"/>
             <field name="perm_read" eval="True"/>
@@ -179,11 +177,8 @@ copyright notices and license terms. -->
             <field name="view" ref="csv_import_form_view"/>
             <field name="act_window" ref="act_csv_import_with_domain"/>
         </record>
-        <menuitem
-            id="menu_csv_import"
-            parent="base_external_mapping.base_external_mapping_menu"
-            action="act_csv_import"
-            />
+        <menuitem parent="menu_main_csv_import" action="act_csv_import" id="menu_csv_import" sequence="30"/>
+
         <record model="ir.model.access" id="access_csv_import_configuration">
             <field name="model" search="[('model', '=', 'csv.import')]"/>
             <field name="perm_read" eval="True"/>

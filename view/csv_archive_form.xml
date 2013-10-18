@@ -11,6 +11,7 @@ copyright notices and license terms. -->
     <field name="data"/>
     <label name="archive_name"/>
     <field name="archive_name"/>
+    <group col="4" colspan="4" id="csv_buttons">
             <button name="cancel"
                 string="Cancel Import Data from CSV"
                 icon="tryton-cancel"/>
@@ -18,7 +19,9 @@ copyright notices and license terms. -->
             <button name="import_csv"
                 string="Import Data from CSV"
                 icon="tryton-go-next"/>
-    <newline/>
-    <label name="state"/>
-    <field name="state"/>
+    </group>
+    <group col="4" colspan="4" id="states">
+        <label name="state"/>
+        <field name="state"/>
+    </group>
 </form>
