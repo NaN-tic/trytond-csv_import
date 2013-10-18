@@ -143,6 +143,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                 'not_default_email_configured': 'There is no default email '
                     'configured. Please, configure one.',
                 'request_title': 'Import CSV file.',
+                'sequence_error': 'Mapping line sequence not found',
                 })
 
     def get_data(self, name):
@@ -417,11 +418,21 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                                 })
                             CSVImport.create(log_vlist)
                             return
-                        if row[l.sequence]:
+                        try:
                             csv_vals[external_mapping.id][l.external_field] = (
                                 row[l.sequence])
                             if l.sequence == field_key:
                                 code_external = row[l.sequence]
+                        except:
+                            log_vlist.append({
+                                'create_date': now,
+                                'status': 'error',
+                                'comment': cls.raise_user_error('sequence_error',
+                                    raise_exception=False),
+                                'archive': archive
+                                })
+                            CSVImport.create(log_vlist)
+                            return
                 if code_external:
                     try_vals = {}
                     for external_mapping in external_mappings:
