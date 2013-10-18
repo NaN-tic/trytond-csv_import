@@ -5,8 +5,6 @@ copyright notices and license terms. -->
 <form string="CSV Import">
     <label name="name"/>
     <field name="name"/>
-    <label name="party"/>
-    <field name="party"/>
     <notebook colspan="4">
         <page string="Configuration" col="4" id="configuration">
             <field name="models" colspan="4"/>

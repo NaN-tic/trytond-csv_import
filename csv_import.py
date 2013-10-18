@@ -24,8 +24,6 @@ class CSVProfile(ModelSQL, ModelView):
     ' CSV Profile'
     __name__ = 'csv.profile'
     name = fields.Char('Name', required=True)
-    party = fields.Many2One('party.party', 'Party', required=True,
-        help='Party CSV Profile.')
     archives = fields.One2Many('csv.archive', 'profile',
         'Archives')
     models = fields.One2Many('base.external.mapping', 'profile',
@@ -526,7 +524,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                 users = User.search([('groups', '=', profile.group.id)])
                 body = (cls.raise_user_error('new_record',
                         error_args=(send_mail[0].__name__,
-                            profile.party.name),
+                            profile.name),
                         raise_exception=False) +
                     ''.join([str(x.id) + '\n' for x in set(send_mail)]))
                 subject = cls.raise_user_error('request_title',
