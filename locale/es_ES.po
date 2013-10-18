@@ -3,10 +3,6 @@ msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
 msgctxt "error:csv.archive:"
-msgid "Archive %s/csv/%s not found."
-msgstr "Archivo  %s/csv/%s no encontrado."
-
-msgctxt "error:csv.archive:"
 msgid "CSV Import Error!"
 msgstr "¡Error en la importación CSV!"
 
@@ -74,6 +70,10 @@ msgstr "Notificación de importación CSV desde %s."
 msgctxt "error:csv.archive:"
 msgid "Information."
 msgstr "Información."
+
+msgctxt "error:csv.archive:"
+msgid "Mapping line sequence not found"
+msgstr "La secuencia en la linia de mapeo no esta definido"
 
 msgctxt "error:csv.archive:"
 msgid ""
@@ -278,13 +278,13 @@ msgctxt "field:csv.profile,models:"
 msgid "Model"
 msgstr "Modelo"
 
+msgctxt "field:csv.profile,name:"
+msgid "Name"
+msgstr "Nombre"
+
 msgctxt "field:csv.profile,note:"
 msgid "Notes"
 msgstr "Notas"
-
-msgctxt "field:csv.profile,party:"
-msgid "Party"
-msgstr "Terceros"
 
 msgctxt "field:csv.profile,rec_name:"
 msgid "Name"
@@ -340,10 +340,6 @@ msgctxt "help:csv.profile,language:"
 msgid "Default language"
 msgstr "Idioma por defecto"
 
-msgctxt "help:csv.profile,party:"
-msgid "Party CSV Profile."
-msgstr "Perfil CSV de tercero."
-
 msgctxt "help:csv.profile,update_record:"
 msgid "Update record from CSV"
 msgstr "Actualizado registro desde CSV."
@@ -392,6 +388,10 @@ msgctxt "model:ir.ui.menu,name:menu_csv_profile"
 msgid "CSV Profile"
 msgstr "Perfil CSV"
 
+msgctxt "model:ir.ui.menu,name:menu_main_csv_import"
+msgid "CSV Import"
+msgstr "Importar CSV"
+
 msgctxt "model:res.group,name:group_csv_import_admin"
 msgid "CSV Import Administrator"
 msgstr "Administrador CSV Importación"
@@ -431,6 +431,10 @@ msgstr "Tabulador"
 msgctxt "selection:csv.profile,csv_archive_separator:"
 msgid "|"
 msgstr "|"
+
+msgctxt "view:base.external.mapping:"
+msgid "CSV Import"
+msgstr "Importar CSV"
 
 msgctxt "view:csv.archive:"
 msgid "CSV Archive"
