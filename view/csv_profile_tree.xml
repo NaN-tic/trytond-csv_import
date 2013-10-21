@@ -4,6 +4,7 @@ The COPYRIGHT file at the top level of this repository contains the full
 copyright notices and license terms. -->
 <tree string="CSV Profiles">
     <field name="name"/>
+    <field name="model"/>
     <field name="create_record"/>
     <field name="update_record"/>
     <field name="language"/>

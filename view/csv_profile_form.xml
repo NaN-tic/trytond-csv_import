@@ -8,16 +8,18 @@ copyright notices and license terms. -->
     <notebook colspan="4">
         <page string="Configuration" col="4" id="configuration">
             <field name="models" colspan="4"/>
-            <label name="code_internal"/>
-            <field name="code_internal"/>
-            <label name="code_external"/>
-            <field name="code_external"/>
+            <label name="model"/>
+            <field name="model"/>
+            <label name="active"/>
+            <field name="active"/>
             <label name="create_record"/>
             <field name="create_record"/>
             <label name="update_record"/>
             <field name="update_record"/>
-            <label name="active"/>
-            <field name="active"/>
+            <label name="code_internal"/>
+            <field name="code_internal"/>
+            <label name="code_external"/>
+            <field name="code_external"/>
             <label name="language"/>
             <field name="language"/>
             <label name="group"/>

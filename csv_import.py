@@ -26,11 +26,21 @@ class CSVProfile(ModelSQL, ModelView):
     name = fields.Char('Name', required=True)
     archives = fields.One2Many('csv.archive', 'profile',
         'Archives')
+    model = fields.Many2One('ir.model', 'Model', required=True)
     models = fields.One2Many('base.external.mapping', 'profile',
         'Model')
     code_internal = fields.Many2One('ir.model.field', 'Tryton Code Field',
-        ondelete='CASCADE', required=True, help='Code field in Tryton.')
-    code_external = fields.Integer("CSV Code Field", required=True,
+        domain=[('model', '=', Eval('model'))],
+        states={
+            'invisible': ~Eval('update_record', True),
+            'required': Eval('update_record', True),
+        }, depends=['update_record'],
+        help='Code field in Tryton.')
+    code_external = fields.Integer("CSV Code Field",
+        states={
+            'invisible': ~Eval('update_record', True),
+            'required': Eval('update_record', True),
+        }, depends=['update_record'], 
         help='Code field in CSV column.')
     create_record = fields.Boolean('Create', help='Create record from CSV')
     update_record = fields.Boolean('Update', help='Update record from CSV')
@@ -63,6 +73,10 @@ class CSVProfile(ModelSQL, ModelView):
     @staticmethod
     def default_update_record():
         return False
+
+    @staticmethod
+    def default_code_external():
+        return 0
 
 
 class CSVArchive(Workflow, ModelSQL, ModelView):
@@ -366,12 +380,11 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                 separator = '\t'
             quote = profile.csv_quote
             header = profile.csv_header
-            code_internal = profile.code_internal
-            model = code_internal.model.model
+
             external_mappings = profile.models
             field_key = profile.code_external
 
-            ModelToImport = pool.get(model)
+            ModelToImport = profile.model
 
             data = StringIO(archive.data)
             try:
@@ -477,7 +490,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                     # Update records
                     if profile.update_record:
                         records = ModelToImport.search([
-                                (code_internal.name, '=', code_external)])
+                                (profile.code_internal.name, '=', code_external)])
                         record = records[0] if records else None
                         if record:
                             updated_records.append(record)
@@ -569,7 +582,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                             logger.error('Unable to deliver email (%s):\n %s'
                                 % (e, msg.as_string()))
 
-        cls.post_import(code_internal.model, list(set(new_records)))
+        cls.post_import(ModelToImport, list(set(new_records)))
         for log in log_vlist:
             log['archive'] = archive
         CSVImport.create(log_vlist)
