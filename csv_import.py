@@ -234,6 +234,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
         profile = csv_model.profile
         parent = csv_model.parent
         comment = None
+        record = None
         logger = logging.getLogger(__name__)
 
         if kvargs.get('record'):
@@ -473,31 +474,30 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                                         })
                                 break
 
-                    records = ModelToImport.search([
-                            (code_internal.name, '=', code_external)])
-                    record = records[0] if records else False
-
                     # Update records
-                    if (record and profile.update_record
-                            and record not in new_records):
-                        updated_records.append(record)
-                        for external_mapping in external_mappings:
-                            try_vals[external_mapping.model.model] = (
-                                ExternalMapping.map_exclude_update(
-                                    external_mapping.name,
-                                    try_vals[external_mapping.model.model],))
-                        for external_mapping in external_mappings:
-                            if external_mapping in parent_models:
-                                cls._update_record(record,
-                                        external_mapping,
-                                        values=try_vals,
-                                        log_vlist=log_vlist,
-                                        key_field=context['key_field'],
-                                        key_value=context['key_value'])
-                                send_mail.append(record)
+                    if profile.update_record:
+                        records = ModelToImport.search([
+                                (code_internal.name, '=', code_external)])
+                        record = records[0] if records else None
+                        if record:
+                            updated_records.append(record)
+                            for external_mapping in external_mappings:
+                                try_vals[external_mapping.model.model] = (
+                                    ExternalMapping.map_exclude_update(
+                                        external_mapping.name,
+                                        try_vals[external_mapping.model.model],))
+                            for external_mapping in external_mappings:
+                                if external_mapping in parent_models:
+                                    cls._update_record(record,
+                                            external_mapping,
+                                            values=try_vals,
+                                            log_vlist=log_vlist,
+                                            key_field=context['key_field'],
+                                            key_value=context['key_value'])
+                                    send_mail.append(record)
 
                     # New records
-                    elif profile.create_record:
+                    if profile.create_record:
                         for external_mapping in external_mappings:
                             if external_mapping in parent_models:
                                 new_record = cls._save_record(
@@ -509,7 +509,8 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                                 if new_record:
                                     new_records.append(new_record)
                                     send_mail.append(new_record)
-                    else:
+
+                    if not profile.create_record and not profile.update_record:
                         log_vlist.append({
                             'create_date': now,
                             'status': 'done',
