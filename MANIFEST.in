@@ -9,3 +9,5 @@ include *.xml
 include locale/*.po
 include doc/*
 include view/*
+include tests/*.rst
+include tests/*.csv
