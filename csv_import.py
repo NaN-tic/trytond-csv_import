@@ -489,7 +489,8 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
 
                     # Update records
                     if profile.update_record:
-                        records = ModelToImport.search([
+                        ModelToUpdate = pool.get(profile.model.model)
+                        records = ModelToUpdate.search([
                                 (profile.code_internal.name, '=', code_external)])
                         record = records[0] if records else None
                         if record:
