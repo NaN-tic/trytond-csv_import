@@ -34,13 +34,13 @@ class CSVProfile(ModelSQL, ModelView):
         states={
             'invisible': ~Eval('update_record', True),
             'required': Eval('update_record', True),
-        }, depends=['update_record'],
+        }, depends=['model', 'update_record'],
         help='Code field in Tryton.')
     code_external = fields.Integer("CSV Code Field",
         states={
             'invisible': ~Eval('update_record', True),
             'required': Eval('update_record', True),
-        }, depends=['update_record'], 
+        }, depends=['model', 'update_record'], 
         help='Code field in CSV column.')
     create_record = fields.Boolean('Create', help='Create record from CSV')
     update_record = fields.Boolean('Update', help='Update record from CSV')

@@ -48,8 +48,8 @@ def doctest_dropdb(test):
 
 def suite():
     suite = trytond.tests.test_tryton.suite()
-    #~ suite.addTests(unittest.TestLoader().loadTestsFromTestCase(
-        #~ CSVImportTestCase))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(
+        CSVImportTestCase))
     suite.addTests(doctest.DocFileSuite('scenario_csv_import.rst',
             setUp=doctest_dropdb, tearDown=doctest_dropdb, encoding='UTF-8',
             optionflags=doctest.REPORT_ONLY_FIRST_FAILURE))
