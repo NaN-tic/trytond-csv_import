@@ -7,6 +7,8 @@ Imports::
     >>> import datetime
     >>> import os
     >>> import shutil
+    >>> import sys
+    >>> import re
     >>> from dateutil.relativedelta import relativedelta
     >>> from decimal import Decimal
     >>> from operator import attrgetter
@@ -14,6 +16,14 @@ Imports::
     >>> today = datetime.date.today()
     >>> from trytond.config import CONFIG
     >>> CONFIG['data_path'] = '/tmp/trytond'
+    >>> paths = sys.path
+    >>> module_path = paths[[i for i, item in enumerate(paths) if re.search('.*/csv_import/.*', item)][0]]
+    >>> if not os.path.exists('/tmp/trytond'):
+    ...     os.makedirs('/tmp/trytond')
+    >>> if not os.path.exists('/tmp/trytond/:memory:'):
+    ...     os.makedirs('/tmp/trytond/:memory:')
+    >>> if not os.path.exists('/tmp/trytond/:memory:/csv_import'):
+    ...     os.makedirs('/tmp/trytond/:memory:/csv_import')
 
 Create database::
 
@@ -118,7 +128,7 @@ Create address mapping::
 
 Create CSV archive::
 
-    >>> srcfile = '%s/tests/%s' % (os.getcwd(), 'import_party.csv')
+    >>> srcfile = '%s/%s' % (module_path, 'import_party.csv')
     >>> dstfile = '%s/:memory:/csv_import/%s' % (CONFIG.get('data_path'), 'import_party.csv')
     >>> shutil.copy(srcfile, dstfile)
     >>> CSVArchive = Model.get('csv.archive')
@@ -193,7 +203,7 @@ Create update mapping::
 
 Create CSV update archive::
 
-    >>> srcfile = '%s/tests/%s' % (os.getcwd(), 'update_party.csv')
+    >>> srcfile = '%s/%s' % (module_path, 'update_party.csv')
     >>> dstfile = '%s/:memory:/csv_import/%s' % (CONFIG.get('data_path'), 'update_party.csv')
     >>> shutil.copy(srcfile, dstfile)
     >>> CSVArchive = Model.get('csv.archive')
