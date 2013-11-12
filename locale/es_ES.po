@@ -260,7 +260,7 @@ msgstr "Encabezado"
 
 msgctxt "field:csv.profile,csv_quote:"
 msgid "Quote"
-msgstr "Presupuesto"
+msgstr "Delimitador"
 
 msgctxt "field:csv.profile,group:"
 msgid "Group"
