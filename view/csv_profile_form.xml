@@ -32,7 +32,6 @@ copyright notices and license terms. -->
             <field name="csv_quote"/>
         </page>
         <page string="Notes" col="4" id="notes">
-            <label name="note"/>
             <field name="note"/>
         </page>
     </notebook>
