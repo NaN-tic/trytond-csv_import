@@ -206,6 +206,13 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
     def default_state():
         return 'draft'
 
+    @staticmethod
+    def default_profile():
+        CSVProfile = Pool().get('csv.profile')
+        csv_profiles = CSVProfile.search([])
+        if len(csv_profiles) == 1:
+            return csv_profiles[0].id
+
     @classmethod
     def _add_default_values(cls, csv_model, values):
         """ This method is to be overridden and compute the default values
