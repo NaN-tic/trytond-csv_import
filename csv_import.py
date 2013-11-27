@@ -627,14 +627,14 @@ class CSVImport(ModelSQL, ModelView):
     ' CSV Import'
     __name__ = 'csv.import'
     _rec_name = 'create_date'
-    create_date = fields.DateTime('Create Date')
-    record = fields.Reference('Imported Record', selection='get_origin')
+    create_date = fields.DateTime('Create Date', readonly=True)
+    record = fields.Reference('Imported Record', selection='get_origin', readonly=True)
     status = fields.Selection([
             ('done', 'Done'),
             ('error', 'Error'),
-            ], 'Status')
-    comment = fields.Text('Comment')
-    archive = fields.Many2One('csv.archive', 'Archive')
+            ], 'Status', readonly=True)
+    comment = fields.Text('Comment', readonly=True)
+    archive = fields.Many2One('csv.archive', 'Archive', readonly=True)
 
     @classmethod
     def __setup__(cls):
