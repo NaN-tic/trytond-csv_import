@@ -14,10 +14,22 @@ from trytond.tools import get_smtp_server
 from trytond.transaction import Transaction
 import logging
 import os
+import re
 import psycopg2
+import unicodedata
 
 __all__ = ['CSVProfile', 'CSVArchive', 'CSVImport', 'BaseExternalMapping']
 __metaclass__ = PoolMeta
+_slugify_strip_re = re.compile(r'[^\w\s-]')
+_slugify_hyphenate_re = re.compile(r'[-\s]+')
+
+
+def slugify(value):
+    if not isinstance(value, unicode):
+        value = unicode(value)
+    value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore')
+    value = unicode(_slugify_strip_re.sub('', value).strip().lower())
+    return _slugify_hyphenate_re.sub('-', value)
 
 
 class CSVProfile(ModelSQL, ModelView):
@@ -188,14 +200,16 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                     raise_exception=True)
 
     def on_change_profile(self):
+        if not self.profile:
+            return {'archive_name': None}
         today = Pool().get('ir.date').today()
         files = len(self.search([
                     ('archive_name', 'like', '%s_%s_%s.csv' %
-                        (today, '%', self.profile.rec_name.replace(' ', '_'))),
+                        (today, '%', slugify(self.profile.rec_name))),
                 ]))
         return {
             'archive_name': ('%s_%s_%s.csv' %
-                (today, files, self.profile.rec_name.replace(' ', '_'))),
+                (today, files, slugify(self.profile.rec_name))),
             }
 
     @staticmethod
