@@ -18,7 +18,7 @@ import re
 import psycopg2
 import unicodedata
 
-__all__ = ['CSVProfile', 'CSVArchive', 'CSVImport', 'BaseExternalMapping']
+__all__ = ['CSVProfile', 'CSVArchive', 'BaseExternalMapping']
 __metaclass__ = PoolMeta
 _slugify_strip_re = re.compile(r'[^\w\s-]')
 _slugify_hyphenate_re = re.compile(r'[-\s]+')
@@ -101,6 +101,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
     data = fields.Function(fields.Binary('Archive', required=True),
         'get_data', setter='set_data')
     archive_name = fields.Char('Archive Name')
+    logs = fields.Text("Logs", readonly=True)
     state = fields.Selection([
             ('draft', 'Draft'),
             ('done', 'Done'),
@@ -292,7 +293,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                 comment = cls.raise_user_error('record_saved',
                     error_args=(record,),
                     raise_exception=False)
-                status = 'done'
+                status = 'Done'
             except psycopg2.ProgrammingError, e:
                 Transaction().cursor.rollback()
                 logger.error('Unable to create %s record: %s'
@@ -312,14 +313,10 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
             comment = cls.raise_user_error('record_already_exist',
                 error_args=(record,),
                 raise_exception=False)
-            status = 'done'
+            status = 'Done'
         if comment:
-            kvargs['log_vlist'].append({
-                'create_date': now,
-                'record': str(record),
-                'status': status,
-                'comment': comment,
-                })
+            kvargs['log_vlist'].append('%s - %s' % (status, comment))
+
         children = ExternalMapping.search([
                 ('profile', '=', profile.id),
                 ('parent', '=', csv_model.id),
@@ -358,13 +355,9 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
         comment = cls.raise_user_error('record_updated',
             error_args=(record.id, record.__name__, str(values[model])),
             raise_exception=False)
-        status = 'done'
-        kvargs['log_vlist'].append({
-                'create_date': now,
-                'record': str(record),
-                'status': status,
-                'comment': comment,
-                })
+
+        kvargs['log_vlist'].append('Done - %s' % (comment))
+
         children_csv_model = ExternalMapping.search([
               ('profile', '=', profile.id),
               ('parent', '=', csv_model.id),
@@ -382,15 +375,13 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                         values[child_csv_model.model.model]))
 
     @classmethod
-    @ModelView.button_action('csv_import.act_csv_import_with_domain')
+    @ModelView.button
     @Workflow.transition('done')
     def import_csv(cls, archives):
         pool = Pool()
         ExternalMapping = pool.get('base.external.mapping')
-        CSVImport = pool.get('csv.import')
         User = pool.get('res.user')
 
-        now = datetime.now()
         log_vlist = []
         context = {}
 
@@ -412,25 +403,19 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                 rows = reader(data, delimiter=str(separator),
                     quotechar=str(quote))
             except TypeError, e:
-                log_vlist.append({
-                    'create_date': now,
-                    'status': 'error',
-                    'comment': cls.raise_user_error('error',
+                cls.write([archive], {'logs': 'Error - %s' % (
+                    cls.raise_user_error('error',
                         error_description='read_error',
                         error_description_args=(archive.archive_name, e),
                         raise_exception=False),
-                    'archive': archive
-                    })
-                CSVImport.create(log_vlist)
+                    )})
                 return
 
-            log_vlist.append({
-                'create_date': now,
-                'status': 'done',
-                'comment': cls.raise_user_error('reading_archive',
+            log_vlist.append('Done - %s' % (
+                    cls.raise_user_error('reading_archive',
                     error_args=(archive.archive_name),
                     raise_exception=False),
-                })
+                    ))
             if header:
                 rows.next()
             parent_models = ExternalMapping.search([('parent', '=', None)])
@@ -448,14 +433,10 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                         csv_vals[external_mapping.id] = {}
                     for l in external_mapping.mapping_lines:
                         if len(row) < l.sequence:
-                            log_vlist.append({
-                                'create_date': now,
-                                'status': 'error',
-                                'comment': cls.raise_user_error('format_error',
+                            cls.write([archive], {'logs': 'Error - %s' % (
+                                cls.raise_user_error('format_error',
                                     raise_exception=False),
-                                'archive': archive
-                                })
-                            CSVImport.create(log_vlist)
+                                )})
                             return
                         if row[l.sequence]:
                             csv_vals[external_mapping.id][l.external_field] = (
@@ -477,18 +458,14 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                                 error_args=(e,))
                     for record in try_vals:
                         if not try_vals[record]:
-                            log_vlist.append({
-                                'create_date': now,
-                                'status': 'error',
-                                'comment': cls.raise_user_error(
+                            cls.write([archive], {'logs': 'Error - %s' % (
+                                cls.raise_user_error(
                                     'function_error',
                                     error_args=(', '.join([x for x in
                                                 csv_vals[external_mapping.id]]
                                             ),),
                                     raise_exception=False),
-                                'archive': archive
-                                })
-                            CSVImport.create(log_vlist)
+                                )})
                             return
                         for field in try_vals[record]:
                             if try_vals[record][field] == code_external:
@@ -536,25 +513,19 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                                     send_mail.append(new_record)
 
                     if not profile.create_record and not profile.update_record:
-                        log_vlist.append({
-                            'create_date': now,
-                            'status': 'done',
-                            'comment': cls.raise_user_error(
+                        log_vlist.append('Done - %s' % (
+                                cls.raise_user_error(
                                 'success_simulation',
                                 error_args=(code_external,),
                                 raise_exception=False),
-                            })
+                                ))
                 else:
-                    log_vlist.append({
-                        'create_date': now,
-                        'status': 'error',
-                        'comment': cls.raise_user_error(
+                    cls.write([archive], {'logs': 'Error - %s' % (
+                        cls.raise_user_error(
                             'code_not_found',
                             error_args=(row,),
                             raise_exception=False),
-                        'archive': archive
-                        })
-                    CSVImport.create(log_vlist)
+                        )})
                     return
 
             if send_mail:  # create mails for each user in the profile group
@@ -568,14 +539,11 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                     raise_exception=False)
                 from_addr = CONFIG.get('smtp_user', False)
                 if not from_addr:
-                    log_vlist.append({
-                            'create_date': now,
-                            'status': 'error',
-                            'comment': cls.raise_user_error(
+                    log_vlist.append('Error - %s' % (
+                            cls.raise_user_error(
                                 'not_default_email_configured',
                                 raise_exception=False),
-                            'archive': archive
-                            })
+                            ))
                     continue
                 msg = MIMEText(body.encode('utf-8'))
                 msg['From'] = from_addr
@@ -594,10 +562,8 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                             logger.error('Unable to deliver email (%s):\n %s'
                                 % (e, msg.as_string()))
 
-        cls.post_import(ModelToImport, list(set(new_records)))
-        for log in log_vlist:
-            log['archive'] = archive
-        CSVImport.create(log_vlist)
+            cls.post_import(ModelToImport, list(set(new_records)))
+            cls.write([archive], {'logs': '\n'.join(log_vlist)})
 
     @classmethod
     def post_import(cls, model, records):
@@ -625,32 +591,6 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
     @Workflow.transition('canceled')
     def cancel(cls, archives):
         pass
-
-
-class CSVImport(ModelSQL, ModelView):
-    ' CSV Import'
-    __name__ = 'csv.import'
-    _rec_name = 'create_date'
-    create_date = fields.DateTime('Create Date', readonly=True)
-    record = fields.Reference('Imported Record', selection='get_origin', readonly=True)
-    status = fields.Selection([
-            ('done', 'Done'),
-            ('error', 'Error'),
-            ], 'Status', readonly=True)
-    comment = fields.Text('Comment', readonly=True)
-    archive = fields.Many2One('csv.archive', 'Archive', readonly=True)
-
-    @classmethod
-    def __setup__(cls):
-        super(CSVImport, cls).__setup__()
-        cls._order.insert(0, ('create_date', 'DESC'))
-        cls._order.insert(1, ('id', 'DESC'))
-
-    @classmethod
-    def get_origin(cls):
-        Model = Pool().get('ir.model')
-        models = Model.search([])
-        return [('', '')] + [(m.model, m.name) for m in models]
 
 
 class BaseExternalMapping:

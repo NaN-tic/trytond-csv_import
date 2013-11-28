@@ -134,66 +134,6 @@ copyright notices and license terms. -->
             <field name="perm_create" eval="True"/>
             <field name="perm_delete" eval="True"/>
         </record>
-
-        <!-- csv.import -->
-        <record model="ir.ui.view" id="csv_import_tree_view">
-            <field name="model">csv.import</field>
-            <field name="type">tree</field>
-            <field name="priority" eval="30"/>
-            <field name="name">csv_import_tree</field>
-        </record>
-        <record model="ir.ui.view" id="csv_import_form_view">
-            <field name="model">csv.import</field>
-            <field name="type">form</field>
-            <field name="priority" eval="30"/>
-            <field name="name">csv_import_form</field>
-        </record>
-        <record model="ir.action.act_window" id="act_csv_import">
-            <field name="name">CSV Import</field>
-            <field name="res_model">csv.import</field>
-        </record>
-        <record model="ir.action.act_window.view" id="act_csv_import_tree">
-            <field name="sequence" eval="10"/>
-            <field name="view" ref="csv_import_tree_view"/>
-            <field name="act_window" ref="act_csv_import"/>
-        </record>
-        <record model="ir.action.act_window.view" id="act_csv_import_form">
-            <field name="sequence" eval="20"/>
-            <field name="view" ref="csv_import_form_view"/>
-            <field name="act_window" ref="act_csv_import"/>
-        </record>
-        <record model="ir.action.act_window" id="act_csv_import_with_domain">
-            <field name="name">CSV Import</field>
-            <field name="res_model">csv.import</field>
-            <field name="domain">[("archive", "=", Eval('active_id'))]</field>
-        </record>
-        <record model="ir.action.act_window.view" id="act_csv_import_with_domain_tree">
-            <field name="sequence" eval="10"/>
-            <field name="view" ref="csv_import_tree_view"/>
-            <field name="act_window" ref="act_csv_import_with_domain"/>
-        </record>
-        <record model="ir.action.act_window.view" id="act_csv_import_with_domain_form">
-            <field name="sequence" eval="20"/>
-            <field name="view" ref="csv_import_form_view"/>
-            <field name="act_window" ref="act_csv_import_with_domain"/>
-        </record>
-        <menuitem parent="menu_main_csv_import" action="act_csv_import" id="menu_csv_import" sequence="30"/>
-
-        <record model="ir.model.access" id="access_csv_import_configuration">
-            <field name="model" search="[('model', '=', 'csv.import')]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="False"/>
-            <field name="perm_create" eval="False"/>
-            <field name="perm_delete" eval="False"/>
-        </record>
-        <record model="ir.model.access" id="access_csv_import_configuration_admin">
-            <field name="model" search="[('model', '=', 'csv.import')]"/>
-            <field name="group" ref="group_csv_import_admin"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_delete" eval="True"/>
-        </record>
     </data>
 </tryton>
     

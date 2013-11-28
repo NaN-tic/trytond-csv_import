@@ -11,6 +11,8 @@ copyright notices and license terms. -->
     <field name="data"/>
     <label name="archive_name"/>
     <field name="archive_name"/>
+    <separator name="logs" colspan="4"/>
+    <field name="logs" colspan="4"/>
     <group col="4" colspan="4" id="csv_buttons">
             <button name="cancel"
                 string="Cancel Import Data from CSV"

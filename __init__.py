@@ -9,6 +9,5 @@ def register():
     Pool.register(
         CSVProfile,
         CSVArchive,
-        CSVImport,
         BaseExternalMapping,
         module='csv_import', type_='model')
