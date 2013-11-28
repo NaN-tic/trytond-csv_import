@@ -436,21 +436,11 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                                 })
                             CSVImport.create(log_vlist)
                             return
-                        try:
+                        if row[l.sequence]:
                             csv_vals[external_mapping.id][l.external_field] = (
                                 row[l.sequence])
                             if l.sequence == field_key:
                                 code_external = row[l.sequence]
-                        except:
-                            log_vlist.append({
-                                'create_date': now,
-                                'status': 'error',
-                                'comment': cls.raise_user_error('sequence_error',
-                                    raise_exception=False),
-                                'archive': archive
-                                })
-                            CSVImport.create(log_vlist)
-                            return
 
                 if code_external:
                     try_vals = {}
