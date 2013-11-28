@@ -136,14 +136,7 @@ Create CSV archive::
     >>> archive.profile = profile
     >>> archive.archive_name = 'import_party.csv'
     >>> archive.save()
-    >>> csv_import = CSVArchive.import_csv([archive.id], config.context)
-
-Get CSV import::
-
-    >>> CSVImport = Model.get('csv.import')
-    >>> csv_import = CSVImport.find([])
-    >>> len(csv_import)
-    6
+    >>> CSVArchive.import_csv([archive.id], config.context)
 
 Get Party::
 
