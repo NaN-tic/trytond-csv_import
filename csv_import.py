@@ -206,6 +206,13 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
     def default_state():
         return 'draft'
 
+    @staticmethod
+    def default_profile():
+        CSVProfile = Pool().get('csv.profile')
+        csv_profiles = CSVProfile.search([])
+        if len(csv_profiles) == 1:
+            return csv_profiles[0].id
+
     @classmethod
     def _add_default_values(cls, csv_model, values):
         """ This method is to be overridden and compute the default values
@@ -610,14 +617,14 @@ class CSVImport(ModelSQL, ModelView):
     ' CSV Import'
     __name__ = 'csv.import'
     _rec_name = 'create_date'
-    create_date = fields.DateTime('Create Date')
-    record = fields.Reference('Imported Record', selection='get_origin')
+    create_date = fields.DateTime('Create Date', readonly=True)
+    record = fields.Reference('Imported Record', selection='get_origin', readonly=True)
     status = fields.Selection([
             ('done', 'Done'),
             ('error', 'Error'),
-            ], 'Status')
-    comment = fields.Text('Comment')
-    archive = fields.Many2One('csv.archive', 'Archive')
+            ], 'Status', readonly=True)
+    comment = fields.Text('Comment', readonly=True)
+    archive = fields.Many2One('csv.archive', 'Archive', readonly=True)
 
     @classmethod
     def __setup__(cls):
