@@ -351,11 +351,11 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                     base = Base()
 
                 #get default values from base model+
-                vals = cls._add_default_values(base, base_values)
+                record_vals = cls._add_default_values(base, base_values)
 
                 #assign key, value in object class
                 #base.key = value
-                for key, value in vals.iteritems():
+                for key, value in record_vals.iteritems():
                     setattr(base, key, value)
 
                 #save - not testing
