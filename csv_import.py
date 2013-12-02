@@ -110,7 +110,7 @@ class CSVProfile(ModelSQL, ModelView):
 
 
 class CSVProfileBaseExternalMapping(ModelSQL):
-    'Category - Customer Tax'
+    'CSV Profile - Base External Mapping'
     __name__ = 'csv.profile-base.external.mapping'
     _table = 'csv_profile_mapping_rel'
     profile = fields.Many2One('csv.profile', 'Profile',
