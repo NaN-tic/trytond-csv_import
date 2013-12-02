@@ -4,18 +4,13 @@
 from StringIO import StringIO
 from csv import reader
 from datetime import datetime
-from email.mime.text import MIMEText
 from trytond.config import CONFIG
-from trytond.exceptions import UserError
 from trytond.model import ModelSQL, ModelView, fields, Workflow
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval, If
-from trytond.tools import get_smtp_server
 from trytond.transaction import Transaction
-import logging
 import os
 import re
-import psycopg2
 import unicodedata
 import string
 
@@ -260,7 +255,8 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
         data = StringIO(archive.data)
         try:
             rows = reader(data, delimiter=str(separator),
-                quotechar='"')
+                quotechar=str(quote))
+
         except TypeError, e:
             cls.write([archive], {'logs': 'Error - %s' % (
                 cls.raise_user_error('error',
@@ -286,11 +282,8 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
         '''
         pool = Pool()
         ExternalMapping = pool.get('base.external.mapping')
-        User = pool.get('res.user')
 
         logs = []
-        context = {}
-
         for archive in archives:
             profile = archive.profile
 
@@ -324,10 +317,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                 if not new_lines:
                     base_values = ExternalMapping.map_external_to_tryton(
                             base_mapping.name, vals)
-                    if base_values.values()[0] == '':
-                        new_line = True
-                    else:
-                        new_line = None
+                    if not base_values.values()[0] == '':
                         new_lines = []
 
                 #get values child models
