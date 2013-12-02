@@ -371,14 +371,10 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
 
                 #save - not testing
                 if not profile.testing:
-                    try:
-                        base.save() #save or update
-                        logs.append(cls.raise_user_error('record_saved',
-                        error_args=(base.id,), raise_exception=False))
-                        new_records.append(base.id)
-                    except:
-                        logs.append(cls.raise_user_error('record_error',
-                        raise_exception=False))
+                    base.save() #save or update
+                    logs.append(cls.raise_user_error('record_saved',
+                    error_args=(base.id,), raise_exception=False))
+                    new_records.append(base.id)
 
             if profile.testing:
                 logs.append(cls.raise_user_error('success_simulation',
