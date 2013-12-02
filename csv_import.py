@@ -231,11 +231,10 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
         return values
 
     @classmethod
-    def post_import(cls, model, records):
+    def post_import(cls, profile, records):
         """ This method is made to be overridden and execute something with
             imported records after import them. At the end of the inherited
-            @param cr: The database cursor,
-            @param model: base object
+            @param profile: profile object
             @param records: List of id records.
         """
         pass
@@ -370,7 +369,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                 logs.append(cls.raise_user_error('success_simulation',
                     raise_exception=False))
 
-            cls.post_import(Base, new_records)
+            cls.post_import(profile, new_records)
             cls.write([archive], {'logs': '\n'.join(logs)})
 
     @classmethod
