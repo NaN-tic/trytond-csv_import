@@ -74,7 +74,7 @@ class CSVProfile(ModelSQL, ModelView):
             (';', 'Semicolon'),
             ('tab', 'Tabulator'),
             ('|', '|'),
-            ], 'CSV Separator', help="Product archive CSV Separator",
+            ], 'CSV Separator', help="Archive CSV Separator",
         required=True)
     csv_quote = fields.Char('Quote', required=True,
         help='Character to use as quote')
