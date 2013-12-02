@@ -4,151 +4,49 @@ msgstr "Content-Type: text/plain; charset=utf-8\n"
 
 msgctxt "error:csv.archive:"
 msgid "CSV Import Error!"
-msgstr "¡Error en la importación CSV!"
-
-msgctxt "error:csv.archive:"
-msgid "CSV improperly formatted."
-msgstr "CSV formateado incorrectamente."
-
-msgctxt "error:csv.archive:"
-msgid "Code not found: Line: %s."
-msgstr "Código no encontrado: Línea %s."
-
-msgctxt "error:csv.archive:"
-msgid "Error creating %s."
-msgstr "Error creando %s."
-
-msgctxt "error:csv.archive:"
-msgid ""
-"Error creating record with values %s.\n"
-"Error raised: %s."
-msgstr ""
-"Error creando el registro con valores %s.\n"
-"Error elevado: %s."
-
-msgctxt "error:csv.archive:"
-msgid "Error in mapping template: %s."
-msgstr "Error en la asignación de la plantilla: %s."
+msgstr "Error importación CSV"
 
 msgctxt "error:csv.archive:"
 msgid "Error reading file %s."
-msgstr "Error leyendo el archivo %s."
+msgstr "Error leyendo archivo: %s"
 
 msgctxt "error:csv.archive:"
 msgid ""
 "Error reading file: %s.\n"
 "Error %s."
-msgstr "Error leyendo el archivo %s."
+msgstr "Error leyendo archivo: %s"
 
 msgctxt "error:csv.archive:"
-msgid "Error saving file! %s."
-msgstr "Error guardando el archivo %s."
+msgid "Error saving records."
+msgstr "Error guardando registros."
 
 msgctxt "error:csv.archive:"
-msgid ""
-"Error updating %s of model %s!\n"
-"Parent not found."
-msgstr ""
-"¡Error actualizando %s del modelo %s!\n"
-"Padre no encontrado."
+msgid "Record %s saved successfully!"
+msgstr "Se ha leydo los registros %s correctamente."
 
 msgctxt "error:csv.archive:"
-msgid ""
-"Function in CSV Profile has a mistake.\n"
-"Please, review: %s.\n"
-"See logs for more information."
-msgstr "La función en el perfil CSV tiene un error."
+msgid "Simulation successfully."
+msgstr "La simulación se ha realizado correctamente."
 
-msgctxt "error:csv.archive:"
-msgid "Import CSV file."
-msgstr "Importar fichero CSV."
+msgctxt "field:base.external.mapping,csv_mapping:"
+msgid "CSV Mapping"
+msgstr "Mapeo CSV"
 
-msgctxt "error:csv.archive:"
-msgid "Import CSV notification from %s."
-msgstr "Notificación de importación CSV desde %s."
-
-msgctxt "error:csv.archive:"
-msgid "Information."
-msgstr "Información."
-
-msgctxt "error:csv.archive:"
-msgid "Mapping line sequence not found"
-msgstr "La secuencia en la linia de mapeo no esta definido"
-
-msgctxt "error:csv.archive:"
-msgid ""
-"No csv archive found.\n"
-"Please, select one."
-msgstr ""
-"Archivo csv no encontrado.\n"
-"Por favor, seleccione uno."
-
-msgctxt "error:csv.archive:"
-msgid "Reading %s archive."
-msgstr "Leyendo %s archivo."
-
-msgctxt "error:csv.archive:"
-msgid "Record %s already exist."
-msgstr "El registro %s ya existe."
-
-msgctxt "error:csv.archive:"
-msgid "Record %s created successfully!"
-msgstr "¡Se ha creado con éxito el registro %s!"
-
-msgctxt "error:csv.archive:"
-msgid "Record %s of %s, updated with values %s!"
-msgstr "¡Registro %s de %s, actualizado con los valores %s!"
-
-msgctxt "error:csv.archive:"
-msgid ""
-"Simulation successfully.\n"
-"Record %s not created nor updated."
-msgstr "Simulación finalizada con éxito."
-
-msgctxt "error:csv.archive:"
-msgid "There are new %s from %s. IDs: "
-msgstr "Hay nuevos %s desde %s. IDs: "
-
-msgctxt "error:csv.archive:"
-msgid "There is no default email configured. Please, configure one."
-msgstr ""
-"No hay ningún correo electrónico por defecto. Deberá configurar un correo "
-"electrónico."
-
-msgctxt "error:csv.archive:"
-msgid ""
-"Unable to update %s because record %s not found.\n"
-"In order to allow updating, please uncheck \"Exclude update\" field in the Base External Mapping profile, or add more data in csv file to find this record."
-msgstr ""
-"No se ha podido actualizar %s porque no se ha encontrado el registro %s."
-
-msgctxt "field:base.external.mapping,parent:"
-msgid "Parent Model"
-msgstr "Modelo padre"
-
-msgctxt "field:base.external.mapping,profile:"
-msgid "CSV Profile"
-msgstr "Perfil CSV"
-
-msgctxt "field:base.external.mapping,rel_field:"
-msgid "Related Field"
-msgstr "Campo relacionado"
-
-msgctxt "field:base.external.mapping,required:"
-msgid "Required"
-msgstr "Requerido"
+msgctxt "field:base.external.mapping,csv_rel_field:"
+msgid "CSV Field related"
+msgstr "Campo CSV relacionado"
 
 msgctxt "field:csv.archive,archive_name:"
 msgid "Archive Name"
-msgstr "Nombre del archivo"
+msgstr "Nombre archivo"
 
 msgctxt "field:csv.archive,create_date:"
 msgid "Create Date"
-msgstr "Fecha de creación"
+msgstr "Fecha creación"
 
 msgctxt "field:csv.archive,create_uid:"
 msgid "Create User"
-msgstr "Usuario de creación"
+msgstr "Usuario creación"
 
 msgctxt "field:csv.archive,data:"
 msgid "Archive"
@@ -161,6 +59,10 @@ msgstr "Fecha"
 msgctxt "field:csv.archive,id:"
 msgid "ID"
 msgstr "ID"
+
+msgctxt "field:csv.archive,logs:"
+msgid "Logs"
+msgstr "Logs"
 
 msgctxt "field:csv.archive,profile:"
 msgid "CSV Profile"
@@ -182,46 +84,6 @@ msgctxt "field:csv.archive,write_uid:"
 msgid "Write User"
 msgstr "Usuario modificación"
 
-msgctxt "field:csv.import,archive:"
-msgid "Archive"
-msgstr "Archivo"
-
-msgctxt "field:csv.import,comment:"
-msgid "Comment"
-msgstr "Comentario"
-
-msgctxt "field:csv.import,create_date:"
-msgid "Create Date"
-msgstr "Crear"
-
-msgctxt "field:csv.import,create_uid:"
-msgid "Create User"
-msgstr "Usuario de creación"
-
-msgctxt "field:csv.import,id:"
-msgid "ID"
-msgstr "ID"
-
-msgctxt "field:csv.import,rec_name:"
-msgid "Name"
-msgstr "Nombre"
-
-msgctxt "field:csv.import,record:"
-msgid "Imported Record"
-msgstr "Registro importado"
-
-msgctxt "field:csv.import,status:"
-msgid "Status"
-msgstr "Estado"
-
-msgctxt "field:csv.import,write_date:"
-msgid "Write Date"
-msgstr "Fecha modificación"
-
-msgctxt "field:csv.import,write_uid:"
-msgid "Write User"
-msgstr "Usuario modificación"
-
 msgctxt "field:csv.profile,active:"
 msgid "Active"
 msgstr "Activo"
@@ -236,11 +98,11 @@ msgstr "Campo código CSV"
 
 msgctxt "field:csv.profile,code_internal:"
 msgid "Tryton Code Field"
-msgstr "Campo código de Tryton"
+msgstr "Campo código CSV"
 
 msgctxt "field:csv.profile,create_date:"
 msgid "Create Date"
-msgstr "Fecha de creación"
+msgstr "Fecha creación"
 
 msgctxt "field:csv.profile,create_record:"
 msgid "Create"
@@ -248,7 +110,7 @@ msgstr "Crear"
 
 msgctxt "field:csv.profile,create_uid:"
 msgid "Create User"
-msgstr "Usuario de creación"
+msgstr "Usuario creación"
 
 msgctxt "field:csv.profile,csv_archive_separator:"
 msgid "CSV Separator"
@@ -262,19 +124,15 @@ msgctxt "field:csv.profile,csv_quote:"
 msgid "Quote"
 msgstr "Delimitador"
 
-msgctxt "field:csv.profile,group:"
-msgid "Group"
-msgstr "Grupo"
-
 msgctxt "field:csv.profile,id:"
 msgid "ID"
 msgstr "ID"
 
-msgctxt "field:csv.profile,language:"
-msgid "Language Default"
-msgstr "Idioma por defecto"
+msgctxt "field:csv.profile,mappings:"
+msgid "Mappings"
+msgstr "Mapeos"
 
-msgctxt "field:csv.profile,models:"
+msgctxt "field:csv.profile,model:"
 msgid "Model"
 msgstr "Modelo"
 
@@ -290,6 +148,10 @@ msgctxt "field:csv.profile,rec_name:"
 msgid "Name"
 msgstr "Nombre"
 
+msgctxt "field:csv.profile,testing:"
+msgid "Testing"
+msgstr "Testeo"
+
 msgctxt "field:csv.profile,update_record:"
 msgid "Update"
 msgstr "Actualizar"
@@ -302,59 +164,81 @@ msgctxt "field:csv.profile,write_uid:"
 msgid "Write User"
 msgstr "Usuario modificación"
 
-msgctxt "help:base.external.mapping,required:"
-msgid "Avoid blank rows in csv file. If not, the previous row is given."
-msgstr ""
-"Impide registros en blanco en el fichero csv. Si no, se toman los valores de"
-" la fila anterior."
+msgctxt "field:csv.profile-base.external.mapping,create_date:"
+msgid "Create Date"
+msgstr "Fecha creación"
+
+msgctxt "field:csv.profile-base.external.mapping,create_uid:"
+msgid "Create User"
+msgstr "Usuario creación"
+
+msgctxt "field:csv.profile-base.external.mapping,id:"
+msgid "ID"
+msgstr "ID"
+
+msgctxt "field:csv.profile-base.external.mapping,mapping:"
+msgid "Mapping"
+msgstr "Mapeo"
+
+msgctxt "field:csv.profile-base.external.mapping,profile:"
+msgid "Profile"
+msgstr "Perfil"
+
+msgctxt "field:csv.profile-base.external.mapping,rec_name:"
+msgid "Name"
+msgstr "Nombre"
+
+msgctxt "field:csv.profile-base.external.mapping,write_date:"
+msgid "Write Date"
+msgstr "Fecha modificación"
+
+msgctxt "field:csv.profile-base.external.mapping,write_uid:"
+msgid "Write User"
+msgstr "Usuario modificación"
 
 msgctxt "help:csv.profile,code_external:"
 msgid "Code field in CSV column."
-msgstr "Campo código en columna CSV."
+msgstr "Campo código en la columna CSV"
 
 msgctxt "help:csv.profile,code_internal:"
 msgid "Code field in Tryton."
-msgstr "Campo código en Tryton."
+msgstr "Campo código en Tryton"
 
 msgctxt "help:csv.profile,create_record:"
 msgid "Create record from CSV"
-msgstr "Crear registro desde CSV."
+msgstr "Crea registros desde CSV"
 
 msgctxt "help:csv.profile,csv_archive_separator:"
-msgid "Product archive CSV Separator"
-msgstr "Separador CSV en el archivo de producto."
+msgid "Archive CSV Separator"
+msgstr "Separador archivo CSV"
 
 msgctxt "help:csv.profile,csv_header:"
 msgid "Header (field names) on archives"
-msgstr "Cabecera (nombres de campo) en los archivos."
+msgstr "Cabezera (nombre campos) de los archivos"
 
 msgctxt "help:csv.profile,csv_quote:"
 msgid "Character to use as quote"
-msgstr "Carácter a usar como delimitador."
+msgstr "Carácteres que se usa como delimitador"
 
-msgctxt "help:csv.profile,group:"
-msgid "Group Users to notification"
-msgstr "Grupo de usuarios para notificaciones."
-
-msgctxt "help:csv.profile,language:"
-msgid "Default language"
-msgstr "Idioma por defecto"
+msgctxt "help:csv.profile,testing:"
+msgid "Not create or update records"
+msgstr "No crea o actualiza registros"
 
 msgctxt "help:csv.profile,update_record:"
 msgid "Update record from CSV"
-msgstr "Actualizado registro desde CSV."
+msgstr "Actualizar registros desde CSV"
 
 msgctxt "model:csv.archive,name:"
 msgid "CSV Archive"
 msgstr "Archivo CSV"
 
-msgctxt "model:csv.import,name:"
-msgid "CSV Import"
-msgstr "Importaciones CSV"
-
 msgctxt "model:csv.profile,name:"
 msgid "CSV Profile"
 msgstr "Perfil CSV"
+
+msgctxt "model:csv.profile-base.external.mapping,name:"
+msgid "CSV Profile - Base External Mapping"
+msgstr "Perfil CSV - Base External Mapping"
 
 msgctxt "model:ir.action,name:act_csv_archive"
 msgid "CSV Archive"
@@ -364,14 +248,6 @@ msgctxt "model:ir.action,name:act_csv_archive_shortcut"
 msgid "CSV Archives"
 msgstr "Archivos CSV"
 
-msgctxt "model:ir.action,name:act_csv_import"
-msgid "CSV Import"
-msgstr "Importaciones CSV"
-
-msgctxt "model:ir.action,name:act_csv_import_with_domain"
-msgid "CSV Import"
-msgstr "Importaciones CSV"
-
 msgctxt "model:ir.action,name:act_csv_profile"
 msgid "CSV Profile"
 msgstr "Perfil CSV"
@@ -380,21 +256,17 @@ msgctxt "model:ir.ui.menu,name:menu_csv_archive"
 msgid "CSV Archive"
 msgstr "Archivo CSV"
 
-msgctxt "model:ir.ui.menu,name:menu_csv_import"
-msgid "CSV Import"
-msgstr "Importaciones CSV"
-
 msgctxt "model:ir.ui.menu,name:menu_csv_profile"
 msgid "CSV Profile"
 msgstr "Perfil CSV"
 
 msgctxt "model:ir.ui.menu,name:menu_main_csv_import"
 msgid "CSV Import"
-msgstr "Importar CSV"
+msgstr "Importación CSV"
 
 msgctxt "model:res.group,name:group_csv_import_admin"
 msgid "CSV Import Administrator"
-msgstr "Administrador CSV Importación"
+msgstr "Administrador CSV"
 
 msgctxt "selection:csv.archive,state:"
 msgid "Canceled"
@@ -407,14 +279,6 @@ msgstr "Realizado"
 msgctxt "selection:csv.archive,state:"
 msgid "Draft"
 msgstr "Borrador"
-
-msgctxt "selection:csv.import,status:"
-msgid "Done"
-msgstr "Realizado"
-
-msgctxt "selection:csv.import,status:"
-msgid "Error"
-msgstr "Error"
 
 msgctxt "selection:csv.profile,csv_archive_separator:"
 msgid "Comma"
@@ -434,7 +298,7 @@ msgstr "|"
 
 msgctxt "view:base.external.mapping:"
 msgid "CSV Import"
-msgstr "Importar CSV"
+msgstr "Importación CSV"
 
 msgctxt "view:csv.archive:"
 msgid "CSV Archive"
@@ -442,7 +306,7 @@ msgstr "Archivo CSV"
 
 msgctxt "view:csv.archive:"
 msgid "Cancel Import Data from CSV"
-msgstr "Cancelar la importación de datos desde CSV"
+msgstr "Cancelar importación CSV"
 
 msgctxt "view:csv.archive:"
 msgid "Draft"
@@ -450,15 +314,11 @@ msgstr "Borrador"
 
 msgctxt "view:csv.archive:"
 msgid "Import Data from CSV"
-msgstr "Importar datos desde CSV"
-
-msgctxt "view:csv.import:"
-msgid "CSV Import"
-msgstr "Importaciones CSV"
+msgstr "Importar datos CSV"
 
 msgctxt "view:csv.profile:"
 msgid "CSV Import"
-msgstr "Importar CSV"
+msgstr "Importación CSV"
 
 msgctxt "view:csv.profile:"
 msgid "CSV Profiles"
