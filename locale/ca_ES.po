@@ -4,153 +4,49 @@ msgstr "Content-Type: text/plain; charset=utf-8\n"
 
 msgctxt "error:csv.archive:"
 msgid "CSV Import Error!"
-msgstr "Error a la importació CSV!"
-
-msgctxt "error:csv.archive:"
-msgid "CSV improperly formatted."
-msgstr "CSV formatat incorrectament."
-
-msgctxt "error:csv.archive:"
-msgid "Code not found: Line: %s."
-msgstr "Codi no trobat: Línia %s."
-
-msgctxt "error:csv.archive:"
-msgid "Error creating %s."
-msgstr "Error creant %s."
-
-msgctxt "error:csv.archive:"
-msgid ""
-"Error creating record with values %s.\n"
-"Error raised: %s."
-msgstr ""
-"Error creant registre amb valors %s.\n"
-"Error aixecat %s."
-
-msgctxt "error:csv.archive:"
-msgid "Error in mapping template: %s."
-msgstr "Error a l'assignació de plantilla: %s. "
+msgstr "Error en la importació CSV."
 
 msgctxt "error:csv.archive:"
 msgid "Error reading file %s."
-msgstr "Error llegint l'arxiu %s."
+msgstr "Error processant els fitxers: %s."
 
 msgctxt "error:csv.archive:"
 msgid ""
 "Error reading file: %s.\n"
 "Error %s."
-msgstr ""
-"Error llegint l'arxiu %s.\n"
-"Error %s."
+msgstr "Error processant els fitxers: %s."
 
 msgctxt "error:csv.archive:"
-msgid "Error saving file! %s."
-msgstr "Error guardant l'arxiu! %s."
+msgid "Error saving records."
+msgstr "Error guardant registres"
 
 msgctxt "error:csv.archive:"
-msgid ""
-"Error updating %s of model %s!\n"
-"Parent not found."
-msgstr ""
-"Error actualitzant %s del model %s!\n"
-"Pare no trobat."
+msgid "Record %s saved successfully!"
+msgstr "Registre %s guardat correctament."
 
 msgctxt "error:csv.archive:"
-msgid ""
-"Function in CSV Profile has a mistake.\n"
-"Please, review: %s.\n"
-"See logs for more information."
-msgstr ""
-"La funció al perfil CSV té un error.\n"
-"Si us plau, reviseu: %s.\n"
-"Mireu el registre per a més informació."
+msgid "Simulation successfully."
+msgstr "La simulació s'ha realitzat correctament."
 
-msgctxt "error:csv.archive:"
-msgid "Import CSV file."
-msgstr "Importa fitxer CSV."
+msgctxt "field:base.external.mapping,csv_mapping:"
+msgid "CSV Mapping"
+msgstr "Mapeig CSV"
 
-msgctxt "error:csv.archive:"
-msgid "Import CSV notification from %s."
-msgstr "Notificació de importació CSV des de %s."
-
-msgctxt "error:csv.archive:"
-msgid "Information."
-msgstr "Informació."
-
-msgctxt "error:csv.archive:"
-msgid "Mapping line sequence not found"
-msgstr "La seqüència en la linia del mapeig no està definit"
-
-msgctxt "error:csv.archive:"
-msgid ""
-"No csv archive found.\n"
-"Please, select one."
-msgstr "No s'ha trobat cap arxiu csv."
-
-msgctxt "error:csv.archive:"
-msgid "Reading %s archive."
-msgstr "Llegint arxiu %s."
-
-msgctxt "error:csv.archive:"
-msgid "Record %s already exist."
-msgstr "Registre %s ja existeix."
-
-msgctxt "error:csv.archive:"
-msgid "Record %s created successfully!"
-msgstr "Registre %s creat amb èxit!"
-
-msgctxt "error:csv.archive:"
-msgid "Record %s of %s, updated with values %s!"
-msgstr "Registre %s de %s, actualitzat amb els valors %s!"
-
-msgctxt "error:csv.archive:"
-msgid ""
-"Simulation successfully.\n"
-"Record %s not created nor updated."
-msgstr "Simulació finalitzada amb èxit."
-
-msgctxt "error:csv.archive:"
-msgid "There are new %s from %s. IDs: "
-msgstr "Hi han nous %s des de %s: IDs: "
-
-msgctxt "error:csv.archive:"
-msgid "There is no default email configured. Please, configure one."
-msgstr ""
-"No hi ha cap correu electrònic disponible. Hareu de configurar un correu "
-"electrònic."
-
-msgctxt "error:csv.archive:"
-msgid ""
-"Unable to update %s because record %s not found.\n"
-"In order to allow updating, please uncheck \"Exclude update\" field in the Base External Mapping profile, or add more data in csv file to find this record."
-msgstr "No s'ha pogut actualitzar %s perquè no s'ha trobat el registre %s."
-
-msgctxt "field:base.external.mapping,parent:"
-msgid "Parent Model"
-msgstr "Model pare"
-
-msgctxt "field:base.external.mapping,profile:"
-msgid "CSV Profile"
-msgstr "Perfil CSV"
-
-msgctxt "field:base.external.mapping,rel_field:"
-msgid "Related Field"
-msgstr "Camp relacionat"
-
-msgctxt "field:base.external.mapping,required:"
-msgid "Required"
-msgstr "Requerit"
+msgctxt "field:base.external.mapping,csv_rel_field:"
+msgid "CSV Field related"
+msgstr "Camp CSV relacionat"
 
 msgctxt "field:csv.archive,archive_name:"
 msgid "Archive Name"
-msgstr "Nom de l'artxiu"
+msgstr "Nom de fitxer"
 
 msgctxt "field:csv.archive,create_date:"
 msgid "Create Date"
-msgstr "Data de creació"
+msgstr "Data creació"
 
 msgctxt "field:csv.archive,create_uid:"
 msgid "Create User"
-msgstr "Usuari de creació"
+msgstr "Usuari creació"
 
 msgctxt "field:csv.archive,data:"
 msgid "Archive"
@@ -163,6 +59,10 @@ msgstr "Data"
 msgctxt "field:csv.archive,id:"
 msgid "ID"
 msgstr "ID"
+
+msgctxt "field:csv.archive,logs:"
+msgid "Logs"
+msgstr "Logs"
 
 msgctxt "field:csv.archive,profile:"
 msgid "CSV Profile"
@@ -178,59 +78,19 @@ msgstr "Estat"
 
 msgctxt "field:csv.archive,write_date:"
 msgid "Write Date"
-msgstr "Data de modificació"
+msgstr "Data modificació"
 
 msgctxt "field:csv.archive,write_uid:"
 msgid "Write User"
-msgstr "Usuari de modificació"
-
-msgctxt "field:csv.import,archive:"
-msgid "Archive"
-msgstr "Arxiu"
-
-msgctxt "field:csv.import,comment:"
-msgid "Comment"
-msgstr "Comentari"
-
-msgctxt "field:csv.import,create_date:"
-msgid "Create Date"
-msgstr "Crea"
-
-msgctxt "field:csv.import,create_uid:"
-msgid "Create User"
-msgstr "Usuari de creació"
-
-msgctxt "field:csv.import,id:"
-msgid "ID"
-msgstr "ID"
-
-msgctxt "field:csv.import,rec_name:"
-msgid "Name"
-msgstr "Nom"
-
-msgctxt "field:csv.import,record:"
-msgid "Imported Record"
-msgstr "Registre importat"
-
-msgctxt "field:csv.import,status:"
-msgid "Status"
-msgstr "Estat"
-
-msgctxt "field:csv.import,write_date:"
-msgid "Write Date"
-msgstr "Data de modificació"
-
-msgctxt "field:csv.import,write_uid:"
-msgid "Write User"
-msgstr "Usuari de modificació"
+msgstr "Usuari modificació"
 
 msgctxt "field:csv.profile,active:"
 msgid "Active"
-msgstr "Arxiu"
+msgstr "Actiu"
 
 msgctxt "field:csv.profile,archives:"
 msgid "Archives"
-msgstr "Arxius"
+msgstr "Fitxers"
 
 msgctxt "field:csv.profile,code_external:"
 msgid "CSV Code Field"
@@ -242,7 +102,7 @@ msgstr "Camp codi Tryton"
 
 msgctxt "field:csv.profile,create_date:"
 msgid "Create Date"
-msgstr "Data de creació"
+msgstr "Data creació"
 
 msgctxt "field:csv.profile,create_record:"
 msgid "Create"
@@ -250,7 +110,7 @@ msgstr "Crea"
 
 msgctxt "field:csv.profile,create_uid:"
 msgid "Create User"
-msgstr "Usuari de creació"
+msgstr "Usuari creació"
 
 msgctxt "field:csv.profile,csv_archive_separator:"
 msgid "CSV Separator"
@@ -258,25 +118,21 @@ msgstr "Separador CSV"
 
 msgctxt "field:csv.profile,csv_header:"
 msgid "Header"
-msgstr "Capçalera"
+msgstr "Encapçalat"
 
 msgctxt "field:csv.profile,csv_quote:"
 msgid "Quote"
 msgstr "Delimitador"
 
-msgctxt "field:csv.profile,group:"
-msgid "Group"
-msgstr "Grup"
-
 msgctxt "field:csv.profile,id:"
 msgid "ID"
 msgstr "ID"
 
-msgctxt "field:csv.profile,language:"
-msgid "Language Default"
-msgstr "Idioma per defecte"
+msgctxt "field:csv.profile,mappings:"
+msgid "Mappings"
+msgstr "Mapetjos"
 
-msgctxt "field:csv.profile,models:"
+msgctxt "field:csv.profile,model:"
 msgid "Model"
 msgstr "Model"
 
@@ -292,70 +148,97 @@ msgctxt "field:csv.profile,rec_name:"
 msgid "Name"
 msgstr "Nom"
 
+msgctxt "field:csv.profile,testing:"
+msgid "Testing"
+msgstr "Test"
+
 msgctxt "field:csv.profile,update_record:"
 msgid "Update"
 msgstr "Actualitza"
 
 msgctxt "field:csv.profile,write_date:"
 msgid "Write Date"
-msgstr "Data de modificació"
+msgstr "Data modificació"
 
 msgctxt "field:csv.profile,write_uid:"
 msgid "Write User"
-msgstr "Usuari de modificació"
+msgstr "Usuari modificació"
 
-msgctxt "help:base.external.mapping,required:"
-msgid "Avoid blank rows in csv file. If not, the previous row is given."
-msgstr ""
-"Impideix registres en blanc al arxiu. Si no, s'agara el de la fila anterior."
+msgctxt "field:csv.profile-base.external.mapping,create_date:"
+msgid "Create Date"
+msgstr "Data creació"
+
+msgctxt "field:csv.profile-base.external.mapping,create_uid:"
+msgid "Create User"
+msgstr "Usuari creació"
+
+msgctxt "field:csv.profile-base.external.mapping,id:"
+msgid "ID"
+msgstr "ID"
+
+msgctxt "field:csv.profile-base.external.mapping,mapping:"
+msgid "Mapping"
+msgstr "Mapeig"
+
+msgctxt "field:csv.profile-base.external.mapping,profile:"
+msgid "Profile"
+msgstr "Perfil"
+
+msgctxt "field:csv.profile-base.external.mapping,rec_name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:csv.profile-base.external.mapping,write_date:"
+msgid "Write Date"
+msgstr "Data modificació"
+
+msgctxt "field:csv.profile-base.external.mapping,write_uid:"
+msgid "Write User"
+msgstr "Usuari modificació"
 
 msgctxt "help:csv.profile,code_external:"
 msgid "Code field in CSV column."
-msgstr "Camp codi a la columna CSV."
+msgstr "Camp codi en les columnes CSV"
 
 msgctxt "help:csv.profile,code_internal:"
 msgid "Code field in Tryton."
-msgstr "Camp codi a Tryton."
+msgstr "Camp codi a Tryton"
 
 msgctxt "help:csv.profile,create_record:"
 msgid "Create record from CSV"
-msgstr "Registre creat des de CSV"
+msgstr "Crea registres des de CSV"
 
 msgctxt "help:csv.profile,csv_archive_separator:"
-msgid "Product archive CSV Separator"
-msgstr "Separador CSV d'arxiu de producte."
+msgid "Archive CSV Separator"
+msgstr "Separador del fitxer CSV"
 
 msgctxt "help:csv.profile,csv_header:"
 msgid "Header (field names) on archives"
-msgstr "Capçalera (noms de camps) a l'arxiu"
+msgstr "Capçalera (nom dels camps) en els fitxers"
 
 msgctxt "help:csv.profile,csv_quote:"
 msgid "Character to use as quote"
-msgstr "Caràcter utilitzat com a delimitador."
+msgstr "Caràcter utilitza en les comes"
 
-msgctxt "help:csv.profile,group:"
-msgid "Group Users to notification"
-msgstr "Grup d'usuaris per notificacions"
-
-msgctxt "help:csv.profile,language:"
-msgid "Default language"
-msgstr "Idioma per defecte"
+msgctxt "help:csv.profile,testing:"
+msgid "Not create or update records"
+msgstr "No crea o actualitza registres"
 
 msgctxt "help:csv.profile,update_record:"
 msgid "Update record from CSV"
-msgstr "Actualitza registre des de CSV"
+msgstr "Actualitza registres des de CSV"
 
 msgctxt "model:csv.archive,name:"
 msgid "CSV Archive"
-msgstr "Arxiu CSV"
-
-msgctxt "model:csv.import,name:"
-msgid "CSV Import"
-msgstr "Importacions CSV"
+msgstr "Fitxer CSV"
 
 msgctxt "model:csv.profile,name:"
 msgid "CSV Profile"
 msgstr "Perfil CSV"
+
+msgctxt "model:csv.profile-base.external.mapping,name:"
+msgid "CSV Profile - Base External Mapping"
+msgstr "Perfil CSV - Base External Mapping"
 
 msgctxt "model:ir.action,name:act_csv_archive"
 msgid "CSV Archive"
@@ -363,15 +246,7 @@ msgstr "Arxiu CSV"
 
 msgctxt "model:ir.action,name:act_csv_archive_shortcut"
 msgid "CSV Archives"
-msgstr "Arxius CSV"
-
-msgctxt "model:ir.action,name:act_csv_import"
-msgid "CSV Import"
-msgstr "Importacions CSV"
-
-msgctxt "model:ir.action,name:act_csv_import_with_domain"
-msgid "CSV Import"
-msgstr "Importacions CSV"
+msgstr "Fitxers CSV"
 
 msgctxt "model:ir.action,name:act_csv_profile"
 msgid "CSV Profile"
@@ -379,11 +254,7 @@ msgstr "Perfil CSV"
 
 msgctxt "model:ir.ui.menu,name:menu_csv_archive"
 msgid "CSV Archive"
-msgstr "Arxiu CSV"
-
-msgctxt "model:ir.ui.menu,name:menu_csv_import"
-msgid "CSV Import"
-msgstr "Importacions CSV"
+msgstr "Fitxer CSV"
 
 msgctxt "model:ir.ui.menu,name:menu_csv_profile"
 msgid "CSV Profile"
@@ -391,11 +262,11 @@ msgstr "Perfil CSV"
 
 msgctxt "model:ir.ui.menu,name:menu_main_csv_import"
 msgid "CSV Import"
-msgstr "Importa CSV"
+msgstr "Importació CSV"
 
 msgctxt "model:res.group,name:group_csv_import_admin"
 msgid "CSV Import Administrator"
-msgstr "Administrador importacions CSV"
+msgstr "Administrador importació CSV"
 
 msgctxt "selection:csv.archive,state:"
 msgid "Canceled"
@@ -403,19 +274,11 @@ msgstr "Cancel·lat"
 
 msgctxt "selection:csv.archive,state:"
 msgid "Done"
-msgstr "Fet"
+msgstr "Realitzat"
 
 msgctxt "selection:csv.archive,state:"
 msgid "Draft"
 msgstr "Esborrany"
-
-msgctxt "selection:csv.import,status:"
-msgid "Done"
-msgstr "Fet"
-
-msgctxt "selection:csv.import,status:"
-msgid "Error"
-msgstr "Error"
 
 msgctxt "selection:csv.profile,csv_archive_separator:"
 msgid "Comma"
@@ -435,15 +298,15 @@ msgstr "|"
 
 msgctxt "view:base.external.mapping:"
 msgid "CSV Import"
-msgstr "Importa CSV"
+msgstr "Importació CSV"
 
 msgctxt "view:csv.archive:"
 msgid "CSV Archive"
-msgstr "Arxiu CSV"
+msgstr "Fitxer CSV"
 
 msgctxt "view:csv.archive:"
 msgid "Cancel Import Data from CSV"
-msgstr "Cancel·la la importació de dades desde CSV"
+msgstr "Cancel·la la importació CSV"
 
 msgctxt "view:csv.archive:"
 msgid "Draft"
@@ -451,15 +314,11 @@ msgstr "Esborrany"
 
 msgctxt "view:csv.archive:"
 msgid "Import Data from CSV"
-msgstr "Importa dades des de CSV"
-
-msgctxt "view:csv.import:"
-msgid "CSV Import"
-msgstr "Importacions CSV"
+msgstr "Importació dades des de CSV"
 
 msgctxt "view:csv.profile:"
 msgid "CSV Import"
-msgstr "Importa CSV"
+msgstr "Importació CSV"
 
 msgctxt "view:csv.profile:"
 msgid "CSV Profiles"
