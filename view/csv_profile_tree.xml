@@ -8,6 +8,4 @@ copyright notices and license terms. -->
     <field name="create_record"/>
     <field name="update_record"/>
     <field name="testing"/>
-    <field name="language"/>
-    <field name="group"/>
 </tree>

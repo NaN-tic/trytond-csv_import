@@ -67,10 +67,6 @@ class CSVProfile(ModelSQL, ModelView):
     update_record = fields.Boolean('Update', help='Update record from CSV')
     testing = fields.Boolean('Testing', help='Not create or update records')
     active = fields.Boolean('Active')
-    language = fields.Many2One('ir.lang', 'Language Default',
-        help='Default language')
-    group = fields.Many2One('res.group', 'Group', required=True,
-        help='Group Users to notification')
     csv_header = fields.Boolean('Header', readonly=True,
         help='Header (field names) on archives')
     csv_archive_separator = fields.Selection([

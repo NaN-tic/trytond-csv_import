@@ -22,10 +22,6 @@ copyright notices and license terms. -->
             <field name="code_external"/>
             <label name="testing"/>
             <field name="testing"/>
-            <label name="language"/>
-            <field name="language"/>
-            <label name="group"/>
-            <field name="group"/>
             <label name="csv_header"/>
             <field name="csv_header"/>
             <label name="csv_archive_separator"/>
