@@ -7,15 +7,10 @@ copyright notices and license terms. -->
             position="after">
         <group col="6" colspan="6" id="csv_import">
             <separator id="csv_import" string="CSV Import" colspan="6"/>
-            <label name="profile"/>
-            <field name="profile"/>
-            <label name="required"/>
-            <field name="required"/>
-            <newline/>
-            <label name="parent"/>
-            <field name="parent"/>
-            <label name="rel_field"/>
-            <field name="rel_field"/>
+            <label name="csv_mapping"/>
+            <field name="csv_mapping"/>
+            <label name="csv_rel_field"/>
+            <field name="csv_rel_field"/>
         </group>
     </xpath>
 </data>

@@ -46,19 +46,7 @@ Init models::
     >>> Group = Model.get('res.group')
     >>> BaseExternalMapping = Model.get('base.external.mapping')
     >>> BaseExternalMappingLine = Model.get('base.external.mapping.line')
-
-Create profile::
-
     >>> CSVProfile = Model.get('csv.profile')
-    >>> profile = CSVProfile()
-    >>> profile.name = 'Parties'
-    >>> profile.model = Model.find([('model', '=', 'party.party')])[0]
-    >>> profile.group =  Group.find([('name', '=', 'Administration')])[0]
-    >>> profile.create_record = True
-    >>> profile.csv_header = True
-    >>> profile.csv_archive_separator = ','
-    >>> profile.csv_quote = '"'
-    >>> profile.save()
 
 Create party mapping::
 
@@ -67,7 +55,6 @@ Create party mapping::
     >>> mapping.name = 'party.csv'
     >>> mapping.model = model_party
     >>> mapping.state = 'done'
-    >>> mapping.profile = profile
     >>> mapping_line = BaseExternalMappingLine()
     >>> mapping.mapping_lines.append(mapping_line)
     >>> mapping_line.sequence = 0
@@ -98,7 +85,10 @@ Create address mapping::
     >>> mapping2.name = 'address.csv'
     >>> mapping2.model = model_address
     >>> mapping2.state = 'done'
-    >>> mapping2.profile = profile
+    >>> mapping2.csv_mapping = mapping
+    >>> mapping2.csv_rel_field = Field.find([
+    ...     ('name', '=', 'addresses'),
+    ...     ('relation', '=', 'party.address')])[0]
     >>> mapping_line = BaseExternalMappingLine()
     >>> mapping2.mapping_lines.append(mapping_line)
     >>> mapping_line.sequence = 1
@@ -106,7 +96,7 @@ Create address mapping::
     ...     ('name', '=', 'street'),
     ...     ('model', '=', model_address.id),
     ...     ])[0]
-    >>> mapping_line.external_field = 'stree'
+    >>> mapping_line.external_field = 'street'
     >>> mapping_line.mapping_type = 'in_out'
     >>> mapping_line.external_type = 'str'
     >>> mapping_line = BaseExternalMappingLine()
@@ -119,12 +109,22 @@ Create address mapping::
     >>> mapping_line.external_field = 'city'
     >>> mapping_line.mapping_type = 'in_out'
     >>> mapping_line.external_type = 'str'
-    >>> mapping2.parent = mapping
-    >>> mapping2.rel_field = Field.find([
-    ...     ('name', '=', 'party'),
-    ...     ('model', '=', model_address.id),
-    ...     ])[0]
     >>> mapping2.save()
+
+Create profile::
+
+    >>> CSVProfile = Model.get('csv.profile')
+    >>> profile = CSVProfile()
+    >>> profile.name = 'Parties'
+    >>> profile.model = Model.find([('model', '=', 'party.party')])[0]
+    >>> profile.group =  Group.find([('name', '=', 'Administration')])[0]
+    >>> profile.create_record = True
+    >>> profile.csv_header = True
+    >>> profile.csv_archive_separator = ','
+    >>> profile.csv_quote = '"'
+    >>> profile.mappings.append(mapping)
+    >>> profile.mappings.append(mapping2)
+    >>> profile.save()
 
 Create CSV archive::
 
@@ -145,43 +145,27 @@ Get Party::
     >>> len(party.addresses)
     1
 
-Create update profile::
+Create Parties and multi Addresses::
 
-    >>> CSVProfile = Model.get('csv.profile')
-    >>> profile = CSVProfile()
-    >>> profile.name = 'Update Parties'
-    >>> profile.model = Model.find([('model', '=', 'party.party')])[0]
-    >>> profile.group =  Group.find([('name', '=', 'Administration')])[0]
-    >>> profile.create_record = False
-    >>> profile.update_record = True
-    >>> profile.code_internal = Field.find([
-    ...     ('name', '=', 'name'),
-    ...     ('model', '=', model_party.id),
-    ...     ])[0]
-    >>> profile.code_external = 0
-    >>> profile.csv_header = True
-    >>> profile.csv_archive_separator = ','
-    >>> profile.csv_quote = '"'
-    >>> profile.save()
+    >>> srcfile = '%s/%s' % (module_path, 'import_party_multiaddress.csv')
+    >>> dstfile = '%s/:memory:/csv_import/%s' % (CONFIG.get('data_path'), 'import_party_multiaddress.csv')
+    >>> shutil.copy(srcfile, dstfile)
+    >>> CSVArchive = Model.get('csv.archive')
+    >>> archive = CSVArchive()
+    >>> archive.profile = profile
+    >>> archive.archive_name = 'import_party_multiaddress.csv'
+    >>> archive.save()
+    >>> CSVArchive.import_csv([archive.id], config.context)
 
-Create update mapping::
+Get Addresses::
 
-    >>> model_party = Model.find([('model', '=', 'party.party')])[0]
-    >>> mapping = BaseExternalMapping()
-    >>> mapping.name = 'update-party.csv'
-    >>> mapping.model = model_party
-    >>> mapping.state = 'done'
-    >>> mapping.profile = profile
-    >>> mapping_line = BaseExternalMappingLine()
-    >>> mapping.mapping_lines.append(mapping_line)
-    >>> mapping_line.sequence = 0
-    >>> mapping_line.field = Field.find([
-    ...     ('name', '=', 'name'),
-    ...     ('model', '=', model_party.id),
-    ...     ])[0]
-    >>> mapping_line.external_field = 'name'
-    >>> mapping_line.mapping_type = 'in_out'
-    >>> mapping_line.external_type = 'str'
+    >>> Address = Model.get('party.address')
+    >>> addresses = Address.find([('party', '=', 'Zikzakmedia')])
+    >>> len(addresses)
+    4
+
+Create mapping line vat::
+
     >>> mapping_line = BaseExternalMappingLine()
     >>> mapping.mapping_lines.append(mapping_line)
     >>> mapping_line.sequence = 1
@@ -194,14 +178,14 @@ Create update mapping::
     >>> mapping_line.external_type = 'str'
     >>> mapping.save()
 
-Create CSV update archive::
+Create CSV Update archive::
 
     >>> srcfile = '%s/%s' % (module_path, 'update_party.csv')
     >>> dstfile = '%s/:memory:/csv_import/%s' % (CONFIG.get('data_path'), 'update_party.csv')
     >>> shutil.copy(srcfile, dstfile)
     >>> CSVArchive = Model.get('csv.archive')
     >>> archive = CSVArchive()
-    >>> archive.profile = profile
+    >>> archive.profile = CSVProfile.find([])[0]
     >>> archive.archive_name = 'update_party.csv'
     >>> archive.save()
     >>> csv_update = CSVArchive.import_csv([archive.id], config.context)

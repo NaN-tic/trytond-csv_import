@@ -7,7 +7,7 @@ copyright notices and license terms. -->
     <field name="name"/>
     <notebook colspan="4">
         <page string="Configuration" col="4" id="configuration">
-            <field name="models" colspan="4"/>
+            <field name="mappings" colspan="4"/>
             <label name="model"/>
             <field name="model"/>
             <label name="active"/>
@@ -20,6 +20,8 @@ copyright notices and license terms. -->
             <field name="code_internal"/>
             <label name="code_external"/>
             <field name="code_external"/>
+            <label name="testing"/>
+            <field name="testing"/>
             <label name="language"/>
             <field name="language"/>
             <label name="group"/>

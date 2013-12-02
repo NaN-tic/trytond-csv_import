@@ -17,8 +17,11 @@ import os
 import re
 import psycopg2
 import unicodedata
+import string
 
-__all__ = ['CSVProfile', 'CSVArchive', 'BaseExternalMapping']
+
+__all__ = ['BaseExternalMapping',
+    'CSVProfile', 'CSVProfileBaseExternalMapping', 'CSVArchive']
 __metaclass__ = PoolMeta
 _slugify_strip_re = re.compile(r'[^\w\s-]')
 _slugify_hyphenate_re = re.compile(r'[-\s]+')
@@ -32,6 +35,12 @@ def slugify(value):
     return _slugify_hyphenate_re.sub('-', value)
 
 
+class BaseExternalMapping:
+    __name__ = 'base.external.mapping'
+    csv_mapping = fields.Many2One('base.external.mapping', 'CSV Mapping')
+    csv_rel_field = fields.Many2One('ir.model.field', 'CSV Field related')
+
+
 class CSVProfile(ModelSQL, ModelView):
     ' CSV Profile'
     __name__ = 'csv.profile'
@@ -39,8 +48,8 @@ class CSVProfile(ModelSQL, ModelView):
     archives = fields.One2Many('csv.archive', 'profile',
         'Archives')
     model = fields.Many2One('ir.model', 'Model', required=True)
-    models = fields.One2Many('base.external.mapping', 'profile',
-        'Model')
+    mappings = fields.Many2Many('csv.profile-base.external.mapping',
+        'profile', 'mapping', 'Mappings', required=True)
     code_internal = fields.Many2One('ir.model.field', 'Tryton Code Field',
         domain=[('model', '=', Eval('model'))],
         states={
@@ -56,12 +65,13 @@ class CSVProfile(ModelSQL, ModelView):
         help='Code field in CSV column.')
     create_record = fields.Boolean('Create', help='Create record from CSV')
     update_record = fields.Boolean('Update', help='Update record from CSV')
+    testing = fields.Boolean('Testing', help='Not create or update records')
     active = fields.Boolean('Active')
     language = fields.Many2One('ir.lang', 'Language Default',
         help='Default language')
     group = fields.Many2One('res.group', 'Group', required=True,
         help='Group Users to notification')
-    csv_header = fields.Boolean('Header',
+    csv_header = fields.Boolean('Header', readonly=True,
         help='Header (field names) on archives')
     csv_archive_separator = fields.Selection([
             (',', 'Comma'),
@@ -87,8 +97,30 @@ class CSVProfile(ModelSQL, ModelView):
         return False
 
     @staticmethod
+    def default_csv_header():
+        return True
+
+    @staticmethod
+    def default_csv_archive_separator():
+        return ","
+
+    @staticmethod
+    def default_csv_quote():
+        return '"'
+
+    @staticmethod
     def default_code_external():
         return 0
+
+
+class CSVProfileBaseExternalMapping(ModelSQL):
+    'Category - Customer Tax'
+    __name__ = 'csv.profile-base.external.mapping'
+    _table = 'csv_profile_mapping_rel'
+    profile = fields.Many2One('csv.profile', 'Profile',
+            ondelete='CASCADE', select=True, required=True)
+    mapping = fields.Many2One('base.external.mapping', 'Mapping', ondelete='RESTRICT',
+            required=True)
 
 
 class CSVArchive(Workflow, ModelSQL, ModelView):
@@ -132,40 +164,12 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                     },
                 })
         cls._error_messages.update({
-                'info': 'Information.',
                 'error': 'CSV Import Error!',
-                'archive_error': 'No csv archive found.\nPlease, select one.',
-                'save_error': 'Error saving file! %s.',
-                'format_error': 'CSV improperly formatted.',
                 'reading_error': 'Error reading file %s.',
                 'read_error': 'Error reading file: %s.\nError %s.',
-                'reading_archive': 'Reading %s archive.',
-                'mapping_error': 'Error in mapping template: %s.',
-                'function_error': 'Function in CSV Profile has a mistake.\n'
-                    'Please, review: %s.\n'
-                    'See logs for more information.',
-                'success_simulation': 'Simulation successfully.\n'
-                    'Record %s not created nor updated.',
-                'code_not_found': 'Code not found: Line: %s.',
-                'record_saved': 'Record %s created successfully!',
-                'record_error': 'Error creating %s.',
-                'creation_error': 'Error creating record with values %s.'
-                    '\nError raised: %s.',
-                'record_already_exist': 'Record %s already exist.',
-                'record_updated': 'Record %s of %s, updated with values %s!',
-                'updating_error': 'Error updating %s of model %s!\n'
-                    'Parent not found.',
-                'cant_update': 'Unable to update %s because record %s not '
-                    'found.\nIn order to allow updating, please uncheck '
-                    '"Exclude update" field in the Base External Mapping '
-                    'profile, or add more data in csv file to find this '
-                    'record.',
-                'notification': 'Import CSV notification from %s.',
-                'new_record': 'There are new %s from %s. IDs: ',
-                'not_default_email_configured': 'There is no default email '
-                    'configured. Please, configure one.',
-                'request_title': 'Import CSV file.',
-                'sequence_error': 'Mapping line sequence not found',
+                'success_simulation': 'Simulation successfully.',
+                'record_saved': 'Record %s saved successfully!',
+                'record_error': 'Error saving records.',
                 })
 
     def get_data(self, name):
@@ -229,356 +233,163 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
             return csv_profiles[0].id
 
     @classmethod
-    def _add_default_values(cls, csv_model, values):
+    def _add_default_values(cls, csv_model, values, parent_values=None):
         """ This method is to be overridden and compute the default values
             of the model
         """
-        pass
-
-    @classmethod
-    def _search_children(cls, csv_model, parent_record, values):
-        """ This method is made to override itself and compute the children
-            of the csv_model.model.model
-        """
-        return []
-
-    @classmethod
-    def _save_record(cls, csv_model, values, **kvargs):
-        """ This method create one record recursively starting by the parent
-            and following by its childs
-            @param archive: Browseable instance of this model
-            @param csv_model: Browseable instance of base.external.mapping
-                model
-            @param values: Dictionary of dictionaries with values to update.
-                The outer key is used for identify the model, and
-                the inner key is used for identify the field of this model.
-            @param kvargs: A standard dictionary for contextual values
-            @return: Return record created
-        """
-
-        if not values:
-            return None
-        if not kvargs:
-            kvargs = {}
-
-        pool = Pool()
-        ExternalMapping = pool.get('base.external.mapping')
-        model = csv_model.model.model
-        ModelToImport = pool.get(model)
-
-        now = datetime.now()
-        profile = csv_model.profile
-        parent = csv_model.parent
-        comment = None
-        record = None
-        logger = logging.getLogger(__name__)
-
-        if kvargs.get('record'):
-            values[model][csv_model.rel_field.name] = kvargs['record']
-        cls._add_default_values(csv_model, values)
-
-        # Records already exist?
-        records = []
-        if kvargs['key_field'] in values[model]:
-            records = ModelToImport.search([
-                    (kvargs['key_field'], '=', kvargs['key_value']),
-                    ])
-        elif parent:
-            records = cls._search_children(csv_model, kvargs['record'], values)
-
-        if not records:
-            try:
-                record, = ModelToImport.create(
-                    [values[model]])
-                comment = cls.raise_user_error('record_saved',
-                    error_args=(record,),
-                    raise_exception=False)
-                status = 'Done'
-            except psycopg2.ProgrammingError, e:
-                Transaction().cursor.rollback()
-                logger.error('Unable to create %s record: %s'
-                    % (ModelToImport.__name__, e))
-                cls.raise_user_error('creation_error',
-                    error_args=(values[model], e))
-            except UserError, e:
-                logger.error('Unable to create %s record: %s'
-                    % (ModelToImport.__name__, e[1][0]))
-                cls.raise_user_error('creation_error',
-                    error_args=(values.get(model), e))
-            except Exception, e:
-                logger.error('Unable to create %s record: %s'
-                    % (ModelToImport.__name__, e))
-        else:
-            record, = records
-            comment = cls.raise_user_error('record_already_exist',
-                error_args=(record,),
-                raise_exception=False)
-            status = 'Done'
-        if comment:
-            kvargs['log_vlist'].append('%s - %s' % (status, comment))
-
-        children = ExternalMapping.search([
-                ('profile', '=', profile.id),
-                ('parent', '=', csv_model.id),
-                ])
-        for child in ExternalMapping.browse(children):
-            cls._save_record(child, values, record=record,
-                key_field=kvargs['key_field'],
-                key_value=kvargs['key_value'],
-                log_vlist=kvargs['log_vlist'])
-        return record
-
-    @classmethod
-    def _update_record(cls, record, csv_model, values, **kvargs):
-        """ This method updates one record recursively starting by the parent
-            and following by its childs
-            @param archive: Browseable instance of this model
-            @param csv_model: Browseable instance of base.external.mapping
-                model
-            @param values: Dictionary of dictionaries with values to update.
-                The outer key is used for identify the model, and
-                the inner key is used for identify the field of this model.
-            @param kvargs: A standard dictionary for contextual values
-            @return: Return record updated
-        """
-        if not values:
-            return None
-        if not kvargs:
-            kvargs = {}
-        pool = Pool()
-        now = datetime.now()
-        model = csv_model.model.model
-        ModelToUpdate = pool.get(model)
-        ExternalMapping = pool.get('base.external.mapping')
-        profile = csv_model.profile
-        ModelToUpdate.write([record], values[model])
-        comment = cls.raise_user_error('record_updated',
-            error_args=(record.id, record.__name__, str(values[model])),
-            raise_exception=False)
-
-        kvargs['log_vlist'].append('Done - %s' % (comment))
-
-        children_csv_model = ExternalMapping.search([
-              ('profile', '=', profile.id),
-              ('parent', '=', csv_model.id),
-              ])
-        # Now update its children
-        for child_csv_model in ExternalMapping.browse(children_csv_model):
-            child_records = cls._search_children(child_csv_model, record,
-                values)
-            if child_records:
-                cls._update_record(child_records[0], child_csv_model, values,
-                    log_vlist=kvargs['log_vlist'])
-            else:
-                cls.raise_user_error('cant_update',
-                    error_args=(child_csv_model.model.model,
-                        values[child_csv_model.model.model]))
-
-    @classmethod
-    @ModelView.button
-    @Workflow.transition('done')
-    def import_csv(cls, archives):
-        pool = Pool()
-        ExternalMapping = pool.get('base.external.mapping')
-        User = pool.get('res.user')
-
-        log_vlist = []
-        context = {}
-
-        for archive in archives:
-            profile = archive.profile
-            separator = profile.csv_archive_separator
-            if separator == "tab":
-                separator = '\t'
-            quote = profile.csv_quote
-            header = profile.csv_header
-
-            external_mappings = profile.models
-            field_key = profile.code_external
-
-            ModelToImport = profile.model
-
-            data = StringIO(archive.data)
-            try:
-                rows = reader(data, delimiter=str(separator),
-                    quotechar=str(quote))
-            except TypeError, e:
-                cls.write([archive], {'logs': 'Error - %s' % (
-                    cls.raise_user_error('error',
-                        error_description='read_error',
-                        error_description_args=(archive.archive_name, e),
-                        raise_exception=False),
-                    )})
-                return
-
-            log_vlist.append('Done - %s' % (
-                    cls.raise_user_error('reading_archive',
-                    error_args=(archive.archive_name),
-                    raise_exception=False),
-                    ))
-            if header:
-                rows.next()
-            parent_models = ExternalMapping.search([('parent', '=', None)])
-
-            send_mail = []
-            csv_vals = {}
-            new_records = []
-            updated_records = []
-            for row in rows:
-                if not row:
-                    continue
-                for external_mapping in external_mappings:
-                    if (not external_mapping.id in csv_vals
-                            or external_mapping.required):
-                        csv_vals[external_mapping.id] = {}
-                    for l in external_mapping.mapping_lines:
-                        if len(row) < l.sequence:
-                            cls.write([archive], {'logs': 'Error - %s' % (
-                                cls.raise_user_error('format_error',
-                                    raise_exception=False),
-                                )})
-                            return
-                        if row[l.sequence]:
-                            csv_vals[external_mapping.id][l.external_field] = (
-                                row[l.sequence])
-                            if l.sequence == field_key:
-                                code_external = row[l.sequence]
-
-                if code_external:
-                    try_vals = {}
-                    for external_mapping in external_mappings:
-                        try:
-                            try_vals[external_mapping.model.model] = (
-                                ExternalMapping.map_external_to_tryton(
-                                    external_mapping.name,
-                                    csv_vals[external_mapping.id],
-                                    context))
-                        except psycopg2.ProgrammingError, e:
-                            cls.raise_user_error('mapping_error',
-                                error_args=(e,))
-                    for record in try_vals:
-                        if not try_vals[record]:
-                            cls.write([archive], {'logs': 'Error - %s' % (
-                                cls.raise_user_error(
-                                    'function_error',
-                                    error_args=(', '.join([x for x in
-                                                csv_vals[external_mapping.id]]
-                                            ),),
-                                    raise_exception=False),
-                                )})
-                            return
-                        for field in try_vals[record]:
-                            if try_vals[record][field] == code_external:
-                                context.update({
-                                        'key_field': field,
-                                        'key_value': code_external,
-                                        })
-                                break
-
-                    # Update records
-                    if profile.update_record:
-                        ModelToUpdate = pool.get(profile.model.model)
-                        records = ModelToUpdate.search([
-                                (profile.code_internal.name, '=', code_external)])
-                        record = records[0] if records else None
-                        if record:
-                            updated_records.append(record)
-                            for external_mapping in external_mappings:
-                                try_vals[external_mapping.model.model] = (
-                                    ExternalMapping.map_exclude_update(
-                                        external_mapping.name,
-                                        try_vals[external_mapping.model.model],))
-                            for external_mapping in external_mappings:
-                                if external_mapping in parent_models:
-                                    cls._update_record(record,
-                                            external_mapping,
-                                            values=try_vals,
-                                            log_vlist=log_vlist,
-                                            key_field=context['key_field'],
-                                            key_value=context['key_value'])
-                                    send_mail.append(record)
-
-                    # New records
-                    if profile.create_record:
-                        for external_mapping in external_mappings:
-                            if external_mapping in parent_models:
-                                new_record = cls._save_record(
-                                        external_mapping,
-                                        values=try_vals, record=False,
-                                        log_vlist=log_vlist,
-                                        key_field=context['key_field'],
-                                        key_value=context['key_value'])
-                                if new_record:
-                                    new_records.append(new_record)
-                                    send_mail.append(new_record)
-
-                    if not profile.create_record and not profile.update_record:
-                        log_vlist.append('Done - %s' % (
-                                cls.raise_user_error(
-                                'success_simulation',
-                                error_args=(code_external,),
-                                raise_exception=False),
-                                ))
-                else:
-                    cls.write([archive], {'logs': 'Error - %s' % (
-                        cls.raise_user_error(
-                            'code_not_found',
-                            error_args=(row,),
-                            raise_exception=False),
-                        )})
-                    return
-
-            if send_mail:  # create mails for each user in the profile group
-                users = User.search([('groups', '=', profile.group.id)])
-                body = (cls.raise_user_error('new_record',
-                        error_args=(send_mail[0].__name__,
-                            profile.name),
-                        raise_exception=False) +
-                    ''.join([str(x.id) + '\n' for x in set(send_mail)]))
-                subject = cls.raise_user_error('request_title',
-                    raise_exception=False)
-                from_addr = CONFIG.get('smtp_user', False)
-                if not from_addr:
-                    log_vlist.append('Error - %s' % (
-                            cls.raise_user_error(
-                                'not_default_email_configured',
-                                raise_exception=False),
-                            ))
-                    continue
-                msg = MIMEText(body.encode('utf-8'))
-                msg['From'] = from_addr
-                msg['Subject'] = subject
-                logger = logging.getLogger(__name__)
-                for user in users:
-                    to_addr = user.email
-                    if to_addr:
-                        msg['To'] = to_addr
-                        try:
-                            server = get_smtp_server()
-                            server.sendmail(from_addr, to_addr,
-                                msg.as_string())
-                            server.quit()
-                        except Exception, e:
-                            logger.error('Unable to deliver email (%s):\n %s'
-                                % (e, msg.as_string()))
-
-            cls.post_import(ModelToImport, list(set(new_records)))
-            cls.write([archive], {'logs': '\n'.join(log_vlist)})
+        return values
 
     @classmethod
     def post_import(cls, model, records):
         """ This method is made to be overridden and execute something with
             imported records after import them. At the end of the inherited
-            method, you must call this super method to make a commit.
-            @param self: The object pointer
             @param cr: The database cursor,
-            @param uid: The current user's ID for security checks.
-            @param model: String with the name of the model where records are
-                imported.
-            @param new_records: List of ids of the created records.
-            @param context: A standard dictionary for contextual values
+            @param model: base object
+            @param records: List of id records.
         """
         pass
+
+    @classmethod
+    def _read_csv_file(cls, archive):
+        '''Read CSV data from archive'''
+        headers = None
+        profile = archive.profile
+        
+        separator = profile.csv_archive_separator
+        if separator == "tab":
+            separator = '\t'
+        quote = profile.csv_quote
+        header = profile.csv_header
+
+        data = StringIO(archive.data)
+        try:
+            rows = reader(data, delimiter=str(separator),
+                quotechar='"')
+        except TypeError, e:
+            cls.write([archive], {'logs': 'Error - %s' % (
+                cls.raise_user_error('error',
+                    error_description='read_error',
+                    error_description_args=(archive.archive_name, e),
+                    raise_exception=False),
+                )})
+            return
+
+        if header:
+            headers = [filter(lambda x: x in string.printable, x).replace('"','') 
+                    for x in next(rows)] #TODO. Know why some header columns get ""
+        return rows, headers
+
+    @classmethod
+    @ModelView.button
+    @Workflow.transition('done')
+    def import_csv(cls, archives):
+        '''
+        Process archives to import data from CSV files
+        base: base model, e.g: party
+        childs: new lines related a base, e.g: addresses
+        '''
+        pool = Pool()
+        ExternalMapping = pool.get('base.external.mapping')
+        User = pool.get('res.user')
+
+        logs = []
+        context = {}
+
+        for archive in archives:
+            profile = archive.profile
+
+            if not profile.create_record and not profile.update_record:
+                continue
+
+            data, headers = cls._read_csv_file(archive)
+
+            base_model = profile.model.model
+
+            child_mappings = []
+            for mapping in profile.mappings:
+                if not mapping.model.model == base_model:
+                    child_mappings.append(mapping)
+                else:
+                    base_mapping = mapping
+
+            new_records = []
+            new_lines = []
+            rows = list(data)
+            Base = pool.get(base_model)
+            for i in range(len(rows)):
+                row = rows[i]
+                if not row:
+                    continue
+
+                #join header and row to convert a list to dict {header: value}
+                vals = dict(zip(headers, row))
+
+                #get values base model
+                if not new_lines:
+                    base_values = ExternalMapping.map_external_to_tryton(
+                            base_mapping.name, vals)
+                    if base_values.values()[0] == '':
+                        new_line = True
+                    else:
+                        new_line = None
+                        new_lines = []
+
+                #get values child models
+                child_values = None
+                for child in child_mappings:
+                    child_rel_field = child.csv_rel_field.name
+                    child_values = ExternalMapping.map_external_to_tryton(
+                            child.name, vals)
+                    Child = pool.get(child.model.model)
+                    # get default values in child model
+                    child_values = cls._add_default_values(Child, child_values, base_values)
+                    new_lines.append(child_values)
+
+                base_values[child_rel_field] = new_lines
+
+                #next row is empty first value, is a new line. Continue
+                if i < len(rows)-1:
+                    if rows[i+1]:
+                        if rows[i+1][0] == '':
+                            continue
+                        else:
+                            new_lines = []
+
+                #create object or get object exist
+                records = None
+                if profile.update_record:
+                    val = row[profile.code_external]
+                    records = Base.search([(profile.code_internal.name, '=', val)])
+                    if records:
+                        base = Base(records[0])
+                if profile.create_record and not records:
+                    base = Base()
+
+                #get default values from base model+
+                vals = cls._add_default_values(base, base_values)
+
+                #assign key, value in object class
+                #base.key = value
+                for key, value in vals.iteritems():
+                    setattr(base, key, value)
+
+                #save - not testing
+                if not profile.testing:
+                    try:
+                        base.save() #save or update
+                        logs.append(cls.raise_user_error('record_saved',
+                        error_args=(base.id,), raise_exception=False))
+                        new_records.append(base.id)
+                    except:
+                        logs.append(cls.raise_user_error('record_error',
+                        raise_exception=False))
+
+            if profile.testing:
+                logs.append(cls.raise_user_error('success_simulation',
+                    raise_exception=False))
+
+            cls.post_import(Base, new_records)
+            cls.write([archive], {'logs': '\n'.join(logs)})
 
     @classmethod
     @ModelView.button
@@ -591,12 +402,3 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
     @Workflow.transition('canceled')
     def cancel(cls, archives):
         pass
-
-
-class BaseExternalMapping:
-    __name__ = 'base.external.mapping'
-    profile = fields.Many2One('csv.profile', 'CSV Profile')
-    parent = fields.Many2One('base.external.mapping', 'Parent Model')
-    rel_field = fields.Many2One('ir.model.field', 'Related Field')
-    required = fields.Boolean('Required', help='Avoid blank rows in csv file. '
-        'If not, the previous row is given.')

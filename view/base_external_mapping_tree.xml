@@ -5,9 +5,7 @@ copyright notices and license terms. -->
 <data>
     <xpath expr="/tree/field[@name=&quot;state&quot;]"
             position="after">
-        <field name="profile"/>
-        <field name="parent"/>
-        <field name="rel_field"/>
-        <field name="required"/>
+        <field name="csv_mapping"/>
+        <field name="csv_rel_field"/>
     </xpath>
 </data>
