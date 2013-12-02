@@ -22,7 +22,7 @@ msgstr "Error guardando registros."
 
 msgctxt "error:csv.archive:"
 msgid "Record %s saved successfully!"
-msgstr "Se ha leydo los registros %s correctamente."
+msgstr "Registro %s guardado correctamente."
 
 msgctxt "error:csv.archive:"
 msgid "Simulation successfully."
