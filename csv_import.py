@@ -321,6 +321,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
 
                 #get values child models
                 child_values = None
+                child_rel_field = None
                 for child in child_mappings:
                     child_rel_field = child.csv_rel_field.name
                     child_values = ExternalMapping.map_external_to_tryton(
@@ -330,7 +331,8 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                     child_values = cls._add_default_values(Child, child_values, base_values)
                     new_lines.append(child_values)
 
-                base_values[child_rel_field] = new_lines
+                if child_rel_field:
+                    base_values[child_rel_field] = new_lines
 
                 #next row is empty first value, is a new line. Continue
                 if i < len(rows)-1:
