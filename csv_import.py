@@ -375,6 +375,14 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
             cls.write([archive], {'logs': '\n'.join(logs)})
 
     @classmethod
+    def copy(cls, archives, default=None):
+        if default is None:
+            default = {}
+        default = default.copy()
+        default['logs'] = None
+        return super(CSVArchive, cls).copy(archives, default=default)
+
+    @classmethod
     @ModelView.button
     @Workflow.transition('draft')
     def draft(cls, archives):
