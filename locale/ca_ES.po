@@ -21,8 +21,12 @@ msgid "Error saving records."
 msgstr "Error guardant registres"
 
 msgctxt "error:csv.archive:"
-msgid "Record %s saved successfully!"
-msgstr "Registre %s guardat correctament."
+msgid "Not create or update line %s"
+msgstr "No s'ha creat o actualizat la linia %s"
+
+msgctxt "error:csv.archive:"
+msgid "Record ID %s saved successfully!"
+msgstr "Guardat el registre ID %s."
 
 msgctxt "error:csv.archive:"
 msgid "Simulation successfully."
