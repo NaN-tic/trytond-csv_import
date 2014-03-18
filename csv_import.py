@@ -159,8 +159,9 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                 'reading_error': 'Error reading file %s.',
                 'read_error': 'Error reading file: %s.\nError %s.',
                 'success_simulation': 'Simulation successfully.',
-                'record_saved': 'Record %s saved successfully!',
+                'record_saved': 'Record ID %s saved successfully!',
                 'record_error': 'Error saving records.',
+                'not_create_update': 'Not create or update line %s',
                 })
 
     def get_data(self, name):
@@ -343,6 +344,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                             new_lines = []
 
                 #create object or get object exist
+                base = None
                 records = None
                 if profile.update_record:
                     val = row[profile.code_external]
@@ -352,7 +354,12 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                 if profile.create_record and not records:
                     base = Base()
 
-                #get default values from base model+
+                if not base:
+                    logs.append(cls.raise_user_error('not_create_update',
+                        error_args=(i+1,), raise_exception=False))
+                    continue
+
+                #get default values from base model
                 record_vals = cls._add_default_values(base, base_values)
 
                 #assign key, value in object class
@@ -364,7 +371,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                 if not profile.testing:
                     base.save() #save or update
                     logs.append(cls.raise_user_error('record_saved',
-                    error_args=(base.id,), raise_exception=False))
+                        error_args=(base.id,), raise_exception=False))
                     new_records.append(base.id)
 
             if profile.testing:
