@@ -37,7 +37,7 @@ class BaseExternalMapping:
 
 
 class CSVProfile(ModelSQL, ModelView):
-    ' CSV Profile'
+    'CSV Profile'
     __name__ = 'csv.profile'
     name = fields.Char('Name', required=True)
     archives = fields.One2Many('csv.archive', 'profile',
@@ -115,7 +115,7 @@ class CSVProfileBaseExternalMapping(ModelSQL):
 
 
 class CSVArchive(Workflow, ModelSQL, ModelView):
-    ' CSV Archive'
+    'CSV Archive'
     __name__ = 'csv.archive'
     _rec_name = 'archive_name'
     profile = fields.Many2One('csv.profile', 'CSV Profile', ondelete='CASCADE',
