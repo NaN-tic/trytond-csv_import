@@ -119,7 +119,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
     __name__ = 'csv.archive'
     _rec_name = 'archive_name'
     profile = fields.Many2One('csv.profile', 'CSV Profile', ondelete='CASCADE',
-        required=True, on_change=['profile'])
+        required=True)
     date_archive = fields.DateTime('Date', required=True)
     data = fields.Function(fields.Binary('Archive', required=True),
         'get_data', setter='set_data')
@@ -196,6 +196,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                     error_description_args=(e,),
                     raise_exception=True)
 
+    @fields.depends('profile')
     def on_change_profile(self):
         if not self.profile:
             return {'archive_name': None}
