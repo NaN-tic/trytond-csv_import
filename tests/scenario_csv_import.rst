@@ -16,7 +16,7 @@ Imports::
     >>> today = datetime.date.today()
     >>> from trytond.config import CONFIG
     >>> CONFIG['data_path'] = '/tmp/trytond'
-    >>> module_path = os.path.join(os.path.dirname(os.getcwd()), 'modules', 'csv_import', 'tests')
+    >>> module_path = os.path.dirname(__file__)
     >>> if not os.path.exists('/tmp/trytond'):
     ...     os.makedirs('/tmp/trytond')
     >>> if not os.path.exists('/tmp/trytond/:memory:'):
