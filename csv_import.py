@@ -4,7 +4,7 @@
 from StringIO import StringIO
 from csv import reader
 from datetime import datetime
-from trytond.config import CONFIG
+from trytond.config import config
 from trytond.model import ModelSQL, ModelView, fields, Workflow
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval, If
@@ -166,7 +166,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
 
     def get_data(self, name):
         cursor = Transaction().cursor
-        path = os.path.join(CONFIG.get('data_path', '/var/lib/trytond'),
+        path = os.path.join(config.get('data_path', '/var/lib/trytond'),
             cursor.database_name, 'csv_import')
         archive = '%s/%s' % (path, self.archive_name.replace(' ', '_'))
         try:
@@ -181,7 +181,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
     @classmethod
     def set_data(cls, archives, name, value):
         cursor = Transaction().cursor
-        path = os.path.join(CONFIG.get('data_path', '/var/lib/trytond'),
+        path = os.path.join(config.get('data_path', '/var/lib/trytond'),
             cursor.database_name, 'csv_import')
         if not os.path.exists(path):
             os.makedirs(path, mode=0777)
