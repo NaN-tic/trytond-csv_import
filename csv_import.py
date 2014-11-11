@@ -166,7 +166,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
 
     def get_data(self, name):
         cursor = Transaction().cursor
-        path = os.path.join(config.get('data_path', '/var/lib/trytond'),
+        path = os.path.join(config.get('database', 'path'),
             cursor.database_name, 'csv_import')
         archive = '%s/%s' % (path, self.archive_name.replace(' ', '_'))
         try:
