@@ -181,7 +181,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
     @classmethod
     def set_data(cls, archives, name, value):
         cursor = Transaction().cursor
-        path = os.path.join(config.get('data_path', '/var/lib/trytond'),
+        path = os.path.join(config.get('database', 'path'),
             cursor.database_name, 'csv_import')
         if not os.path.exists(path):
             os.makedirs(path, mode=0777)
