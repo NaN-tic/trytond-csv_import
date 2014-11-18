@@ -56,7 +56,7 @@ class CSVProfile(ModelSQL, ModelView):
         states={
             'invisible': ~Eval('update_record', True),
             'required': Eval('update_record', True),
-        }, depends=['model', 'update_record'], 
+        }, depends=['model', 'update_record'],
         help='Code field in CSV column.')
     create_record = fields.Boolean('Create', help='Create record from CSV')
     update_record = fields.Boolean('Update', help='Update record from CSV')
@@ -110,8 +110,8 @@ class CSVProfileBaseExternalMapping(ModelSQL):
     _table = 'csv_profile_mapping_rel'
     profile = fields.Many2One('csv.profile', 'Profile',
             ondelete='CASCADE', select=True, required=True)
-    mapping = fields.Many2One('base.external.mapping', 'Mapping', ondelete='RESTRICT',
-            required=True)
+    mapping = fields.Many2One('base.external.mapping', 'Mapping',
+        ondelete='RESTRICT', required=True)
 
 
 class CSVArchive(Workflow, ModelSQL, ModelView):
@@ -246,7 +246,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
         '''Read CSV data from archive'''
         headers = None
         profile = archive.profile
-        
+
         separator = profile.csv_archive_separator
         if separator == "tab":
             separator = '\t'
@@ -267,9 +267,10 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                 )})
             return
 
-        if header:
-            headers = [filter(lambda x: x in string.printable, x).replace('"','') 
-                    for x in next(rows)] #TODO. Know why some header columns get ""
+        if header:  # TODO. Know why some header columns get ""
+            headers = [filter(lambda x: x in string.printable, x
+                    ).replace('"', '')
+                for x in next(rows)]
         return rows, headers
 
     @classmethod
@@ -330,16 +331,17 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                             child.name, vals)
                     Child = pool.get(child.model.model)
                     # get default values in child model
-                    child_values = cls._add_default_values(Child, child_values, base_values)
+                    child_values = cls._add_default_values(Child, child_values,
+                        base_values)
                     new_lines.append(child_values)
 
                 if child_rel_field:
                     base_values[child_rel_field] = new_lines
 
                 #next row is empty first value, is a new line. Continue
-                if i < len(rows)-1:
-                    if rows[i+1]:
-                        if rows[i+1][0] == '':
+                if i < len(rows) - 1:
+                    if rows[i + 1]:
+                        if rows[i + 1][0] == '':
                             continue
                         else:
                             new_lines = []
@@ -349,7 +351,9 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                 records = None
                 if profile.update_record:
                     val = row[profile.code_external]
-                    records = Base.search([(profile.code_internal.name, '=', val)])
+                    records = Base.search([
+                            (profile.code_internal.name, '=', val)
+                            ])
                     if records:
                         base = Base(records[0])
                 if profile.create_record and not records:
@@ -357,7 +361,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
 
                 if not base:
                     logs.append(cls.raise_user_error('not_create_update',
-                        error_args=(i+1,), raise_exception=False))
+                        error_args=(i + 1,), raise_exception=False))
                     continue
 
                 #get default values from base model
@@ -370,7 +374,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
 
                 #save - not testing
                 if not profile.testing:
-                    base.save() #save or update
+                    base.save()  # save or update
                     logs.append(cls.raise_user_error('record_saved',
                         error_args=(base.id,), raise_exception=False))
                     new_records.append(base.id)
