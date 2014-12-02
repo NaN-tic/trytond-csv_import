@@ -62,7 +62,7 @@ class CSVProfile(ModelSQL, ModelView):
     update_record = fields.Boolean('Update', help='Update record from CSV')
     testing = fields.Boolean('Testing', help='Not create or update records')
     active = fields.Boolean('Active')
-    csv_header = fields.Boolean('Header', readonly=True,
+    csv_header = fields.Boolean('Header',
         help='Header (field names) on archives')
     csv_archive_separator = fields.Selection([
             (',', 'Comma'),
