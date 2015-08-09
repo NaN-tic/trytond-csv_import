@@ -1,14 +1,14 @@
-==========
-CSV Import
-==========
+=====================================
+CSV. Importación ficheros CSV (Mapeo)
+=====================================
 
 Importa registros desde ficheros CSV.
 
 Configuración
 -------------
 
-El servidor de Tryton debe disponer activo el sistema de fichero (data_path)
-como activar un servidor SMTP para el envío de corro.
+El servidor de Tryton debe disponer activo el sistema de fichero (data_path),
+como también activar un servidor SMTP para el envío de correo.
 
 Perfiles y archivos
 -------------------
