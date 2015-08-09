@@ -265,8 +265,8 @@ msgid "CSV Profile"
 msgstr "Perfil CSV"
 
 msgctxt "model:ir.ui.menu,name:menu_main_csv_import"
-msgid "CSV Import"
-msgstr "Importació CSV"
+msgid "CSV Import (Mapping)"
+msgstr "Importació CSV (Mapeig)"
 
 msgctxt "model:res.group,name:group_csv_import_admin"
 msgid "CSV Import Administrator"
