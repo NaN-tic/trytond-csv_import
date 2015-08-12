@@ -4,7 +4,8 @@ The COPYRIGHT file at the top level of this repository contains the full
 copyright notices and license terms. -->
 <tree string="CSV Archive">
     <field name="profile"/>
-    <field name="date_archive"/>
+    <field name="date_archive" widget="date"/>
+    <field name="date_archive" widget="time" string="Time"/>
     <field name="data"/>
     <field name="archive_name"/>
     <field name="state"/>
