@@ -1,4 +1,4 @@
-# 
+#
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
@@ -319,6 +319,10 @@ msgstr "Borrador"
 msgctxt "view:csv.archive:"
 msgid "Import Data from CSV"
 msgstr "Importar datos CSV"
+
+msgctxt "view:csv.archive:"
+msgid "Time"
+msgstr "Hora"
 
 msgctxt "view:csv.profile:"
 msgid "CSV Import"
