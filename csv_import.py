@@ -198,17 +198,16 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
 
     @fields.depends('profile')
     def on_change_profile(self):
-        if not self.profile:
-            return {'archive_name': None}
-        today = Pool().get('ir.date').today()
-        files = len(self.search([
-                    ('archive_name', 'like', '%s_%s_%s.csv' %
-                        (today, '%', slugify(self.profile.rec_name))),
-                ]))
-        return {
-            'archive_name': ('%s_%s_%s.csv' %
-                (today, files, slugify(self.profile.rec_name))),
-            }
+        if self.profile:
+            today = Pool().get('ir.date').today()
+            files = len(self.search([
+                        ('archive_name', 'like', '%s_%s_%s.csv' %
+                            (today, '%', slugify(self.profile.rec_name))),
+                    ]))
+            self.archive_name = '%s_%s_%s.csv' % \
+                    (today, files, slugify(self.profile.rec_name))
+        else:
+            self.archive_name = None
 
     @staticmethod
     def default_date_archive():
