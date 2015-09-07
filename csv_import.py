@@ -121,8 +121,8 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
     profile = fields.Many2One('csv.profile', 'CSV Profile', ondelete='CASCADE',
         required=True)
     date_archive = fields.DateTime('Date', required=True)
-    data = fields.Function(fields.Binary('Archive', required=True),
-        'get_data', setter='set_data')
+    data = fields.Function(fields.Binary('Archive', filename='archive_name',
+        required=True), 'get_data', setter='set_data')
     archive_name = fields.Char('Archive Name')
     logs = fields.Text("Logs", readonly=True)
     state = fields.Selection([
@@ -171,7 +171,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
         archive = '%s/%s' % (path, self.archive_name.replace(' ', '_'))
         try:
             with open(archive, 'r') as f:
-                return buffer(f.read())
+                return fields.Binary.cast(f.read())
         except IOError:
             self.raise_user_error('error',
                 error_description='reading_error',
