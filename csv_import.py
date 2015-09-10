@@ -225,11 +225,17 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
             return csv_profiles[0].id
 
     @classmethod
-    def _add_default_values(cls, csv_model, values, parent_values=None):
-        """ This method is to be overridden and compute the default values
-            of the model
-        """
-        return values
+    def _import_data(cls, record, values, parent_values=None):
+        '''Load _import_data_modelname or seattr from dict'''
+        method_data = '_import_data_%s' % record.__name__.split('.')[0]
+
+        if hasattr(cls, method_data):
+            import_data = getattr(cls, method_data)
+            return import_data(record, values, parent_values)
+        else:
+            for k, v in values.iteritems():
+                setattr(record, k, v)
+            return record
 
     @classmethod
     def post_import(cls, profile, records):
@@ -330,7 +336,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                             child.name, vals)
                     Child = pool.get(child.model.model)
                     # get default values in child model
-                    child_values = cls._add_default_values(Child, child_values,
+                    child_values = cls._import_data(Child, child_values,
                         base_values)
                     new_lines.append(child_values)
 
@@ -346,7 +352,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                             new_lines = []
 
                 #create object or get object exist
-                base = None
+                record = None
                 records = None
                 if profile.update_record:
                     val = row[profile.code_external]
@@ -354,29 +360,24 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                             (profile.code_internal.name, '=', val)
                             ])
                     if records:
-                        base = Base(records[0])
+                        record = Base(records[0])
                 if profile.create_record and not records:
-                    base = Base()
+                    record = Base()
 
-                if not base:
+                if not record:
                     logs.append(cls.raise_user_error('not_create_update',
                         error_args=(i + 1,), raise_exception=False))
                     continue
 
                 #get default values from base model
-                record_vals = cls._add_default_values(base, base_values)
-
-                #assign key, value in object class
-                #base.key = value
-                for key, value in record_vals.iteritems():
-                    setattr(base, key, value)
+                record = cls._import_data(record, base_values)
 
                 #save - not testing
                 if not profile.testing:
-                    base.save()  # save or update
+                    record.save()  # save or update
                     logs.append(cls.raise_user_error('record_saved',
-                        error_args=(base.id,), raise_exception=False))
-                    new_records.append(base.id)
+                        error_args=(record.id,), raise_exception=False))
+                    new_records.append(record.id)
 
             if profile.testing:
                 logs.append(cls.raise_user_error('success_simulation',
