@@ -177,10 +177,10 @@ Create mapping line vat::
     >>> mapping.mapping_lines.append(mapping_line)
     >>> mapping_line.sequence = 1
     >>> mapping_line.field = Field.find([
-    ...     ('name', '=', 'vat_number'),
+    ...     ('name', '=', 'code'),
     ...     ('model', '=', model_party.id),
     ...     ])[0]
-    >>> mapping_line.external_field = 'vat_number'
+    >>> mapping_line.external_field = 'code'
     >>> mapping_line.mapping_type = 'in_out'
     >>> mapping_line.external_type = 'str'
     >>> mapping.save()
@@ -198,9 +198,9 @@ Create CSV Update archive::
     >>> archive.save()
     >>> csv_update = CSVArchive.import_csv([archive.id], config.context)
 
-Get Party by vat::
+Get Party by code::
 
     >>> Party = Model.get('party.party')
-    >>> parties = Party.find([('vat_number', '=', '123456789A')])
+    >>> parties = Party.find([('code', '=', 'C1')])
     >>> len(parties)
     1

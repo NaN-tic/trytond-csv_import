@@ -108,7 +108,7 @@ Crearemos dos mapeos nuevos o usaremos los mapeos del ejemplo anterior.
 Actualización datos de un tercero
 ---------------------------------
 
-En este ejemplo veremos la opción de actualizar un tercero y añadir el NIF/CIF.
+En este ejemplo veremos la opción de actualizar un tercero y código cliente.
 
 En el perfil debemos activar la opción "Actualizar" y rellenar el campo que usaremos
 como "identificador a Tryton" (en este ejemplo el nombre) y en que posición el nombre
@@ -116,13 +116,13 @@ se encuentra el campo a buscar (en este ejemplo la posición 0 -zero-)
 
 .. code-block:: csv
 
-    "name","vat_number"
-    "Zikzakmedia","123456789A"
-    "Raimon Esteve","123456789B"
+    "name","code"
+    "Zikzakmedia","C1"
+    "Raimon Esteve","C2"
 
 Deberemos crear un mapeo relacionado con el perfil:
 
 * Tercero (party)
 
   * Nombre (name)
-  * CIF/NIF (vat_number)
+  * Código (code)
