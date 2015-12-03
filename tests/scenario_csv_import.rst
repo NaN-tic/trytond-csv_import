@@ -39,7 +39,7 @@ Install modules::
 
     >>> Module = Model.get('ir.module')
     >>> modules = Module.find([
-    ...         ('name', 'in', ('party', module_name)),
+    ...         ('name', 'in', ('party', 'csv_import')),
     ...         ])
     >>> Module.install([x.id for x in modules], config.context)
     >>> Wizard('ir.module.install_upgrade').execute('upgrade')
@@ -142,7 +142,7 @@ Create CSV archive::
     >>> archive.profile = profile
     >>> archive.archive_name = 'import_party.csv'
     >>> archive.save()
-    >>> CSVArchive.import_csv([archive.id], config.context)
+    >>> archive.click('import_csv')
 
 Get Party::
 
@@ -162,7 +162,7 @@ Create Parties and multi Addresses::
     >>> archive.profile = profile
     >>> archive.archive_name = 'import_party_multiaddress.csv'
     >>> archive.save()
-    >>> CSVArchive.import_csv([archive.id], config.context)
+    >>> archive.click('import_csv')
 
 Get Addresses::
 
