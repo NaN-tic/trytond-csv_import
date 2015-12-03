@@ -335,8 +335,9 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                     child_values = ExternalMapping.map_external_to_tryton(
                             child.name, vals)
                     Child = pool.get(child.model.model)
+                    child = Child()
                     # get default values in child model
-                    child_values = cls._import_data(Child, child_values,
+                    child_values = cls._import_data(child, child_values,
                         base_values)
                     new_lines.append(child_values)
 
