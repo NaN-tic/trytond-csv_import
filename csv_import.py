@@ -231,11 +231,10 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
 
         if hasattr(cls, method_data):
             import_data = getattr(cls, method_data)
-            return import_data(record, values, parent_values)
-        else:
-            for k, v in values.iteritems():
-                setattr(record, k, v)
-            return record
+            record = import_data(record, values, parent_values)
+        for k, v in values.iteritems():
+            setattr(record, k, v)
+        return record
 
     @classmethod
     def post_import(cls, profile, records):
