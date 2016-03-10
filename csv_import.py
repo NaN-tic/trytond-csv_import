@@ -165,7 +165,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                 })
 
     def get_data(self, name):
-        cursor = Transaction().cursor
+        cursor = Transaction().connection.cursor()
         path = os.path.join(config.get('database', 'path'),
             cursor.database_name, 'csv_import')
         archive = '%s/%s' % (path, self.archive_name.replace(' ', '_'))
@@ -180,7 +180,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
 
     @classmethod
     def set_data(cls, archives, name, value):
-        cursor = Transaction().cursor
+        cursor = Transaction().connection.cursor()
         path = os.path.join(config.get('database', 'path'),
             cursor.database_name, 'csv_import')
         if not os.path.exists(path):
