@@ -17,7 +17,6 @@ import string
 
 __all__ = ['BaseExternalMapping',
     'CSVProfile', 'CSVProfileBaseExternalMapping', 'CSVArchive']
-__metaclass__ = PoolMeta
 _slugify_strip_re = re.compile(r'[^\w\s-]')
 _slugify_hyphenate_re = re.compile(r'[-\s]+')
 
@@ -31,6 +30,7 @@ def slugify(value):
 
 
 class BaseExternalMapping:
+    __metaclass__ = PoolMeta
     __name__ = 'base.external.mapping'
     csv_mapping = fields.Many2One('base.external.mapping', 'CSV Mapping')
     csv_rel_field = fields.Many2One('ir.model.field', 'CSV Field related')
