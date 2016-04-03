@@ -1,7 +1,7 @@
 # This file is part of csv_import module for Tryton.
 # The COPYRIGHT file at the top level of this repository contains
 # the full copyright notices and license terms.
-from StringIO import StringIO
+from io import StringIO
 from csv import reader
 from datetime import datetime
 from trytond.config import config
