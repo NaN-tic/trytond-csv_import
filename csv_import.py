@@ -272,7 +272,6 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                     raise_exception=False),
                 )})
             return
-        data.close()
 
         if header:  # TODO. Know why some header columns get ""
             headers = [filter(lambda x: x in string.printable, x
