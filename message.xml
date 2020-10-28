@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
+this repository contains the full copyright notices and license terms. -->
+<tryton>
+    <data grouped="1">
+        <record model="ir.message" id="msg_error">
+            <field name="text">CSV Import Error!</field>
+        </record>
+        <record model="ir.message" id="msg_read_error">
+            <field name="text">Error reading file: %(filename)s.
+%(error)s</field>
+        </record>
+        <record model="ir.message" id="msg_success_simulation">
+            <field name="text">Simulation successfully</field>
+        </record>
+        <record model="ir.message" id="msg_record_saved">
+            <field name="text">Record ID "%(record)s" saved successfully!</field>
+        </record>
+        <record model="ir.message" id="msg_record_error">
+            <field name="text">Error saving records</field>
+        </record>
+        <record model="ir.message" id="msg_not_create_update">
+            <field name="text">Not create or update line %(line)s</field>
+        </record>
+        <record model="ir.message" id="msg_not_mapping">
+            <field name="text">Not found mapping at "%(profile)s"</field>
+        </record>
+        <record model="ir.message" id="msg_missing_rel_field">
+            <field name="text">Missing relation field at "%(mapping)s"</field>
+        </record>
+    </data>
+</tryton>

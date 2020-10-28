@@ -10,7 +10,7 @@ from trytond.tests.test_tryton import doctest_checker
 
 
 class CsvImportTestCase(ModuleTestCase):
-    'Test Csv Import module'
+    'Test CSV Import module'
     module = 'csv_import'
 
 

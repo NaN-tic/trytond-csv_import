@@ -2,7 +2,7 @@
 <!-- This file is part of csv_import module for Tryton.
 The COPYRIGHT file at the top level of this repository contains the full
 copyright notices and license terms. -->
-<form string="CSV Archive" col="4">
+<form col="4">
     <label name="profile"/>
     <field name="profile"/>
     <label name="date_archive"/>
@@ -14,13 +14,9 @@ copyright notices and license terms. -->
     <separator name="logs" colspan="4"/>
     <field name="logs" colspan="4"/>
     <group col="4" colspan="4" id="csv_buttons">
-            <button name="cancel"
-                string="Cancel Import Data from CSV"
-                icon="tryton-cancel"/>
-            <button name="draft" string="Draft"/>
-            <button name="import_csv"
-                string="Import Data from CSV"
-                icon="tryton-go-next"/>
+        <button name="cancel" icon="tryton-cancel"/>
+        <button name="draft"/>
+        <button name="import_csv" icon="tryton-go-next"/>
     </group>
     <group col="4" colspan="4" id="states">
         <label name="state"/>

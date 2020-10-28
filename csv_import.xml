@@ -78,6 +78,22 @@ copyright notices and license terms. -->
             <field name="group" ref="group_csv_import_admin"/>
         </record>
 
+        <record model="ir.model.button" id="cancel_button">
+            <field name="name">cancel</field>
+            <field name="string">Cancel</field>
+            <field name="model" search="[('model', '=', 'csv.archive')]"/>
+        </record>
+        <record model="ir.model.button" id="draft_button">
+            <field name="name">draft</field>
+            <field name="string">Draft</field>
+            <field name="model" search="[('model', '=', 'csv.archive')]"/>
+        </record>
+        <record model="ir.model.button" id="import_csv_button">
+            <field name="name">import_csv</field>
+            <field name="string">Import CSV</field>
+            <field name="model" search="[('model', '=', 'csv.archive')]"/>
+        </record>
+
         <!-- base.external.mapping -->
         <record model="ir.ui.view" id="base_external_mapping_tree_view">
             <field name="model">base.external.mapping</field>
@@ -138,4 +154,3 @@ copyright notices and license terms. -->
         </record>
     </data>
 </tryton>
-    

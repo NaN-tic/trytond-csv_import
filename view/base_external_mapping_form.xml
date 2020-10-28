@@ -3,8 +3,7 @@
 The COPYRIGHT file at the top level of this repository contains the full
 copyright notices and license terms. -->
 <data>
-    <xpath expr="/form/field[@name=&quot;mapping_lines&quot;]"
-            position="after">
+    <xpath expr="/form/field[@name='mapping_lines']" position="after">
         <group col="6" colspan="6" id="csv_import">
             <separator id="csv_import" string="CSV Import" colspan="6"/>
             <label name="csv_mapping"/>

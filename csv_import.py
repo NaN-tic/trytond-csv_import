@@ -1,39 +1,33 @@
 # This file is part of csv_import module for Tryton.
 # The COPYRIGHT file at the top level of this repository contains
 # the full copyright notices and license terms.
-try:
-    import cStringIO as StringIO
-except ImportError:
-    from io import StringIO
-from csv import reader
-from datetime import datetime
-from trytond.config import config
-from trytond.model import ModelSQL, ModelView, fields, Workflow
-from trytond.pool import Pool, PoolMeta
-from trytond.pyson import Eval, If
-from trytond.transaction import Transaction
 import os
 import re
 import unicodedata
 import string
+import csv
+from io import StringIO
+from datetime import datetime
+from trytond.config import config
+from trytond.model import ModelSQL, ModelView, fields, Workflow
+from trytond.pool import Pool, PoolMeta
+from trytond.pyson import Eval
+from trytond.transaction import Transaction
+from trytond.i18n import gettext
+from trytond.exceptions import UserError
 
 
 __all__ = ['BaseExternalMapping',
     'CSVProfile', 'CSVProfileBaseExternalMapping', 'CSVArchive']
-_slugify_strip_re = re.compile(r'[^\w\s-]')
-_slugify_hyphenate_re = re.compile(r'[-\s]+')
 
 
 def slugify(value):
-    if not isinstance(value, unicode):
-        value = unicode(value)
     value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore')
-    value = unicode(_slugify_strip_re.sub('', value).strip().lower())
-    return _slugify_hyphenate_re.sub('-', value)
+    value = re.sub('[^\w\s-]', '', value.decode('utf-8')).strip().lower()
+    return re.sub('[-\s]+', '-', value)
 
 
-class BaseExternalMapping:
-    __metaclass__ = PoolMeta
+class BaseExternalMapping(metaclass=PoolMeta):
     __name__ = 'base.external.mapping'
     csv_mapping = fields.Many2One('base.external.mapping', 'CSV Mapping')
     csv_rel_field = fields.Many2One('ir.model.field', 'CSV Field related')
@@ -137,8 +131,10 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(CSVArchive, cls).__setup__()
-        cls._order.insert(0, ('date_archive', 'DESC'))
-        cls._order.insert(1, ('id', 'DESC'))
+        cls._order = [
+            ('date_archive', 'DESC'),
+            ('id', 'DESC'),
+            ]
         cls._transitions |= set((
                 ('draft', 'done'),
                 ('draft', 'canceled'),
@@ -147,59 +143,43 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
         cls._buttons.update({
                 'cancel': {
                     'invisible': Eval('state') != 'draft',
+                    'depends': ['state'],
                     },
                 'draft': {
                     'invisible': Eval('state') != 'canceled',
-                    'icon': If(Eval('state') == 'canceled', 'tryton-clear',
-                        'tryton-go-previous'),
+                    'depends': ['state'],
                     },
                 'import_csv': {
                     'invisible': Eval('state') != 'draft',
+                    'depends': ['state'],
                     },
-                })
-        cls._error_messages.update({
-                'error': 'CSV Import Error!',
-                'reading_error': 'Error reading file %s.',
-                'read_error': 'Error reading file: %s.\nError %s.',
-                'success_simulation': 'Simulation successfully.',
-                'record_saved': 'Record ID %s saved successfully!',
-                'record_error': 'Error saving records.',
-                'not_create_update': 'Not create or update line %s',
                 })
 
     def get_data(self, name):
-        cursor = Transaction().connection.cursor()
         path = os.path.join(config.get('database', 'path'),
-            cursor.database_name, 'csv_import')
+            Transaction().database.name, 'csv_import')
         archive = '%s/%s' % (path, self.archive_name.replace(' ', '_'))
         try:
-            with open(archive, 'r') as f:
+            with open(archive, 'rb') as f:
                 return fields.Binary.cast(f.read())
         except IOError:
-            self.raise_user_error('error',
-                error_description='reading_error',
-                error_description_args=(self.archive_name.replace(' ', '_'),),
-                raise_exception=True)
+            pass
 
     @classmethod
     def set_data(cls, archives, name, value):
-        cursor = Transaction().connection.cursor()
         path = os.path.join(config.get('database', 'path'),
-            cursor.database_name, 'csv_import')
+            Transaction().database.name, 'csv_import')
         if not os.path.exists(path):
-            os.makedirs(path, mode=0777)
+            os.makedirs(path, mode=0o777)
         for archive in archives:
             archive = '%s/%s' % (path, archive.archive_name.replace(' ', '_'))
             try:
-                with open(archive, 'w') as f:
+                with open(archive, 'wb') as f:
                     f.write(value)
-            except IOError, e:
-                cls.raise_user_error('error',
-                    error_description='save_error',
-                    error_description_args=(e,),
-                    raise_exception=True)
+            except IOError:
+                raise UserError(gettext('csv_import.msg_error'))
 
-    @fields.depends('profile')
+    @fields.depends('profile', '_parent_profile.rec_name')
     def on_change_profile(self):
         if self.profile:
             today = Pool().get('ir.date').today()
@@ -235,7 +215,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
         if hasattr(cls, method_data):
             import_data = getattr(cls, method_data)
             record = import_data(record, values, parent_values)
-        for k, v in values.iteritems():
+        for k, v in values.items():
             setattr(record, k, v)
         return record
 
@@ -260,24 +240,22 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
         quote = profile.csv_quote
         header = profile.csv_header
 
-        data = StringIO(archive.data)
+        data = StringIO(archive.data.decode('ascii', errors='replace'))
         try:
-            rows = reader(data, delimiter=str(separator),
+            reader = csv.reader(data, delimiter=str(separator),
                 quotechar=str(quote))
-        except TypeError, e:
+        except TypeError:
             cls.write([archive], {'logs': 'Error - %s' % (
-                cls.raise_user_error('error',
-                    error_description='read_error',
-                    error_description_args=(archive.archive_name, e),
-                    raise_exception=False),
+                gettext('csv_import.msg_read_error',
+                    filename=archive.archive_name.replace(' ', '_'))
                 )})
             return
 
-        if header:  # TODO. Know why some header columns get ""
-            headers = [filter(lambda x: x in string.printable, x
-                    ).replace('"', '')
-                for x in next(rows)]
-        return rows, headers
+        if header:
+            # TODO. Know why some header columns get ""
+            headers = ["".join(list(filter(lambda x: x in string.printable,
+                x.replace('"', '')))) for x in next(reader)]
+        return reader, headers
 
     @classmethod
     @ModelView.button
@@ -298,7 +276,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
             if not profile.create_record and not profile.update_record:
                 continue
 
-            data, headers = cls._read_csv_file(archive)
+            reader, headers = cls._read_csv_file(archive)
 
             base_model = profile.model.model
 
@@ -308,10 +286,14 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                     child_mappings.append(mapping)
                 else:
                     base_mapping = mapping
+            if not base_mapping:
+                logs.append(gettext('csv_import.msg_not_mapping',
+                    profile=profile.rec_name))
+                continue
 
             new_records = []
             new_lines = []
-            rows = list(data)
+            rows = list(reader)
             Base = pool.get(base_model)
             for i in range(len(rows)):
                 row = rows[i]
@@ -325,13 +307,17 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                 if not new_lines:
                     base_values = ExternalMapping.map_external_to_tryton(
                             base_mapping.name, vals)
-                    if not base_values.values()[0] == '':
+                    if not list(base_values.values())[0] == '':
                         new_lines = []
 
                 #get values child models
                 child_values = None
                 child_rel_field = None
                 for child in child_mappings:
+                    if not child.csv_rel_field:
+                        logs.append(gettext('csv_import.msg_missing_rel_field',
+                            mapping=child.rec_name))
+                        continue
                     child_rel_field = child.csv_rel_field.name
                     child_values = ExternalMapping.map_external_to_tryton(
                             child.name, vals)
@@ -345,7 +331,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                 if child_rel_field:
                     base_values[child_rel_field] = new_lines
 
-                #next row is empty first value, is a new line. Continue
+                # next row is empty first value, is a new line. Continue
                 if i < len(rows) - 1:
                     if rows[i + 1]:
                         if rows[i + 1][0] == '':
@@ -367,8 +353,8 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                     record = Base()
 
                 if not record:
-                    logs.append(cls.raise_user_error('not_create_update',
-                        error_args=(i + 1,), raise_exception=False))
+                    logs.append(gettext('csv_import.msg_not_create_update',
+                        line=i + 1))
                     continue
 
                 #get default values from base model
@@ -377,13 +363,12 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                 #save - not testing
                 if not profile.testing:
                     record.save()  # save or update
-                    logs.append(cls.raise_user_error('record_saved',
-                        error_args=(record.id,), raise_exception=False))
+                    logs.append(gettext('csv_import.msg_record_saved',
+                        record=record.id))
                     new_records.append(record.id)
 
             if profile.testing:
-                logs.append(cls.raise_user_error('success_simulation',
-                    raise_exception=False))
+                logs.append(gettext('csv_import.msg_success_simulation'))
 
             cls.post_import(profile, new_records)
             cls.write([archive], {'logs': '\n'.join(logs)})

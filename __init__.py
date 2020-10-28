@@ -2,13 +2,13 @@
 # The COPYRIGHT file at the top level of this repository contains
 # the full copyright notices and license terms.
 from trytond.pool import Pool
-from .csv_import import *
+from . import csv_import
 
 
 def register():
     Pool.register(
-        CSVProfile,
-        CSVProfileBaseExternalMapping,
-        CSVArchive,
-        BaseExternalMapping,
+        csv_import.CSVProfile,
+        csv_import.CSVProfileBaseExternalMapping,
+        csv_import.CSVArchive,
+        csv_import.BaseExternalMapping,
         module='csv_import', type_='model')

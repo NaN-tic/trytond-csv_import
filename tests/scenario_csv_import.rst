@@ -12,9 +12,11 @@ Imports::
     >>> from dateutil.relativedelta import relativedelta
     >>> from decimal import Decimal
     >>> from operator import attrgetter
-    >>> today = datetime.date.today()
+    >>> from proteus import config, Model, Wizard
+    >>> from trytond.tests.tools import activate_modules
     >>> from trytond.config import config
     >>> from trytond.tests.test_tryton import DB_NAME as db_name
+    >>> today = datetime.date.today()
 
     >>> module_path = os.path.dirname(__file__) + '/'
 
@@ -28,27 +30,14 @@ Imports::
     >>> if not os.path.exists(data_path + db_name + module_name):
     ...     os.makedirs(data_path + db_name + module_name)
 
-    >>> from proteus import config, Model, Wizard
+Install csv_import::
 
-Create database::
-
-    >>> config = config.set_trytond()
-    >>> config.pool.test = True
-
-Install modules::
-
-    >>> Module = Model.get('ir.module')
-    >>> modules = Module.find([
-    ...         ('name', 'in', ('party', 'csv_import')),
-    ...         ])
-    >>> Module.install([x.id for x in modules], config.context)
-    >>> Wizard('ir.module.install_upgrade').execute('upgrade')
+    >>> config = activate_modules(['csv_import', 'party'])
 
 Init models::
 
     >>> Model = Model.get('ir.model')
     >>> Field = Model.get('ir.model.field')
-    >>> Group = Model.get('res.group')
     >>> BaseExternalMapping = Model.get('base.external.mapping')
     >>> BaseExternalMappingLine = Model.get('base.external.mapping.line')
     >>> CSVProfile = Model.get('csv.profile')
@@ -122,7 +111,6 @@ Create profile::
     >>> profile = CSVProfile()
     >>> profile.name = 'Parties'
     >>> profile.model = Model.find([('model', '=', 'party.party')])[0]
-    >>> profile.group =  Group.find([('name', '=', 'Administration')])[0]
     >>> profile.create_record = True
     >>> profile.csv_header = True
     >>> profile.csv_archive_separator = ','
@@ -136,7 +124,7 @@ Create CSV archive::
     >>> srcfile = '%s/%s' % (module_path, 'import_party.csv')
     >>> dstfile = '%s/%s/%s/%s' % (data_path, db_name, module_name,
     ...     'import_party.csv')
-    >>> shutil.copy(srcfile, dstfile)
+    >>> _ = shutil.copy(srcfile, dstfile)
     >>> CSVArchive = Model.get('csv.archive')
     >>> archive = CSVArchive()
     >>> archive.profile = profile
@@ -156,7 +144,7 @@ Create Parties and multi Addresses::
     >>> srcfile = '%s/%s' % (module_path, 'import_party_multiaddress.csv')
     >>> dstfile = '%s/%s/%s/%s' % (data_path, db_name, module_name,
     ...     'import_party_multiaddress.csv')
-    >>> shutil.copy(srcfile, dstfile)
+    >>> _ = shutil.copy(srcfile, dstfile)
     >>> CSVArchive = Model.get('csv.archive')
     >>> archive = CSVArchive()
     >>> archive.profile = profile
@@ -190,7 +178,7 @@ Create CSV Update archive::
     >>> srcfile = '%s/%s' % (module_path, 'update_party.csv')
     >>> dstfile = '%s/%s/%s/%s' % (data_path, db_name, module_name,
     ...     'update_party.csv')
-    >>> shutil.copy(srcfile, dstfile)
+    >>> _ = shutil.copy(srcfile, dstfile)
     >>> CSVArchive = Model.get('csv.archive')
     >>> archive = CSVArchive()
     >>> archive.profile = CSVProfile.find([])[0]
