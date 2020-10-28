@@ -208,6 +208,114 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
             return csv_profiles[0].id
 
     @classmethod
+    def _import_data_sale(cls, record, values, parent_values=None):
+        '''
+        Sale and Sale Line data
+        '''
+        pool = Pool()
+        Sale = pool.get('sale.sale')
+        SaleLine = pool.get('sale.line')
+        Party = pool.get('party.party')
+
+        record_name = record.__name__
+
+        if record_name == 'sale.sale':
+            party = values.get('party')
+
+            if party:
+                party = Party(party)
+
+                if not record.id:
+                    record = Sale.get_sale_data(values.get('party'))
+
+                    if hasattr(record, 'shop') and not getattr(record, 'shop'):
+                        shop, = pool.get('sale.shop').search([], limit=1)
+                        record.shop = shop
+
+                if values.get('invoice_address') \
+                        and values.get('invoice_address') in party.addresses:
+                    record.invoice_address = values.get('invoice_address')
+
+                if values.get('shipment_address') \
+                        and values.get('shipment_address') in party.addresses:
+                    record.shipment_address = values.get('shipment_address')
+
+                if values.get('customer_reference'):
+                    record.customer_reference = values.get('customer_reference')
+
+                if values.get('lines'):
+                    record.lines = values.get('lines')
+
+                return record
+
+        if record_name == 'sale.line':
+            if values.get('product') and values.get('quantity'):
+                sale = Sale.get_sale_data(parent_values.get('party'))
+                line = SaleLine.get_sale_line_data(
+                            sale,
+                            values.get('product'),
+                            values.get('quantity')
+                            )
+                line.on_change_product()
+
+                return line
+
+        return record
+
+    @classmethod
+    def _import_data_purchase(cls, record, values, parent_values=None):
+        '''
+        Purchase and Purchase Line data
+        '''
+        pool = Pool()
+        Purchase = pool.get('purchase.purchase')
+        Party = pool.get('party.party')
+
+        record_name = record.__name__
+
+        if record_name == 'purchase.purchase':
+            party = values.get('party')
+
+            if party:
+                party = Party(party)
+
+                if not record.id:
+                    default_values = record.default_get(record._fields.keys(),
+                        with_rec_name=False)
+                    for key, value in default_values.items():
+                        setattr(record, key, value)
+                    record.party = party
+                record.on_change_party()
+
+                if values.get('invoice_address') \
+                        and values.get('invoice_address') in party.addresses:
+                    record.invoice_address = values.get('invoice_address')
+
+                if values.get('lines'):
+                    record.lines = values.get('lines')
+
+                return record
+
+        if record_name == 'purchase.line':
+            if values.get('product') and values.get('quantity'):
+                purchase = Purchase()
+                default_values = Purchase.default_get(Purchase._fields.keys(),
+                        with_rec_name=False)
+                for key, value in default_values.items():
+                    setattr(purchase, key, value)
+                purchase.party = parent_values.get('party')
+                purchase.on_change_party()
+
+                record.purchase = purchase
+                record.product = values.get('product')
+                record.quantity = values.get('quantity')
+                record.on_change_product()
+
+                return record
+
+        return record
+
+    @classmethod
     def _import_data(cls, record, values, parent_values=None):
         '''Load _import_data_modelname or seattr from dict'''
         method_data = '_import_data_%s' % record.__name__.split('.')[0]
@@ -273,7 +381,7 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
         for archive in archives:
             profile = archive.profile
 
-            if not profile.create_record and not profile.update_record:
+            if not profile.create_record and not profile.update_record or not archive.data:
                 continue
 
             reader, headers = cls._read_csv_file(archive)
