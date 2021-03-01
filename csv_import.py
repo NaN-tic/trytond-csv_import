@@ -348,16 +348,25 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
         quote = profile.csv_quote
         header = profile.csv_header
 
-        data = StringIO(archive.data.decode('ascii', errors='replace'))
+        try:
+            data = StringIO(archive.data.decode('utf8'))
+        except UnicodeDecodeError as error:
+            cls.write([archive], {'logs': 'Error - %s' % (
+                gettext('csv_import.msg_read_error',
+                    filename=archive.archive_name.replace(' ', '_'),
+                    error=error)
+                )})
+            return None, None
         try:
             reader = csv.reader(data, delimiter=str(separator),
                 quotechar=str(quote))
-        except TypeError:
+        except TypeError as error:
             cls.write([archive], {'logs': 'Error - %s' % (
                 gettext('csv_import.msg_read_error',
-                    filename=archive.archive_name.replace(' ', '_'))
+                    filename=archive.archive_name.replace(' ', '_'),
+                    error=error)
                 )})
-            return
+            return None, None
 
         if header:
             # TODO. Know why some header columns get ""
@@ -385,6 +394,8 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                 continue
 
             reader, headers = cls._read_csv_file(archive)
+            if not reader:
+                continue
 
             base_model = profile.model.model
 
