@@ -470,7 +470,11 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
 
                 #save - not testing
                 if not profile.testing:
-                    record.save()  # save or update
+                    try:
+                        record.save()  # save or update
+                    except (UserError, ValueError) as e:
+                        raise UserError(e.__str__())
+
                     logs.append(gettext('csv_import.msg_record_saved',
                         record=record.id))
                     new_records.append(record.id)
