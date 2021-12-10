@@ -415,6 +415,8 @@ class CSVArchive(Workflow, ModelSQL, ModelView):
                 if not new_lines:
                     base_values = ExternalMapping.map_external_to_tryton(
                             base_mapping.name, vals)
+                    if not list(base_values.values()):
+                        continue
                     if not list(base_values.values())[0] == '':
                         new_lines = []
 
